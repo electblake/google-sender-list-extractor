@@ -8,10 +8,6 @@
  * Controller of the addressBundlerApp
  */
 angular.module('addressBundlerApp')
-  .controller('EmailsBundleCtrl', function ($scope) {
-    $scope.awesomeThings = [
-      'HTML5 Boilerplate',
-      'AngularJS',
-      'Karma'
-    ];
-  });
+  .controller('EmailsBundleCtrl', ['$scope', function ($scope) {
+    
+  }]);

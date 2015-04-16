@@ -2,12 +2,12 @@
 
 /**
  * @ngdoc function
- * @name addressBundlerApp.controller:EmailsStartCtrl
+ * @name addressBundlerApp.controller:AppRootCtrl
  * @description
- * # EmailsStartCtrl
+ * # AppRootCtrl
  * Controller of the addressBundlerApp
  */
 angular.module('addressBundlerApp')
-  .controller('EmailsStartCtrl', ['$scope', function ($scope) {
+  .controller('AppRootCtrl', ['$scope', function ($scope) {
     
   }]);

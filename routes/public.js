@@ -3,5 +3,6 @@ module.exports = function(app) {
 
 	// index
 	app.use('/', require('./pages'));
+	require('./views')(app);
 
 };
