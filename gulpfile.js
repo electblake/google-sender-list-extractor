@@ -12,12 +12,12 @@ var debug = require('gulp-debug');
 var gutil = require('gulp-util');
 
 var src = {
-	script: './public/script',
+	scripts: './public/scripts',
 	styles: './public/styles'
 };
 
 var dist = {
-	script: './public/js',
+	scripts: './public/js',
 	styles: './public/css'
 };
 
@@ -28,12 +28,12 @@ gulp.task('sass', function() {
 		.pipe(debug({ title: 'sass' }));
 });
 
-gulp.task('script', function() {
-	return gulp.src('./public/script/**/*.js')
+gulp.task('scripts', function() {
+	return gulp.src('./public/scripts/**/*.js')
 		.pipe(concat('app.bundle.js'))
 		.pipe(uglify())
-		.pipe(gulp.dest(dist.script))
-		.pipe(debug({ title: 'script' }));
+		.pipe(gulp.dest(dist.scripts))
+		.pipe(debug({ title: 'scripts' }));
 });
 
 gulp.task('nodemon', function() {
@@ -41,11 +41,11 @@ gulp.task('nodemon', function() {
 });
 
 gulp.task('watch', function() {
-	gulp.watch('./public/script/**/*.js', ['script']);
+	gulp.watch('./public/scripts/**/*.js', ['scripts']);
 	gulp.watch('./public/sass/**/*.scss', ['sass']);
 	gulp.start('nodemon');
 });
 
-gulp.task('default', ['script', 'sass'], function() {
+gulp.task('default', ['scripts', 'sass'], function() {
 	gulp.start('watch');
 });

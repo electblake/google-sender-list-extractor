@@ -17,11 +17,13 @@
     "cookie-parser": "^1.3.3",
     "express": "^4.10.8",
     "express-handlebars": "^1.1.0",
+    "express-layout": "^0.1.0",
     "lodash": "^3.6.0",
     "mongoose": "^3.8.21",
     "morgan": "^1.5.1",
     "node-env-file": "^0.1.4",
     "node-gmail-api": "^0.3.0",
+    "nunjucks": "^1.3.3",
     "read-package-json": "^1.2.7",
     "serve-favicon": "^2.2.0"
   },

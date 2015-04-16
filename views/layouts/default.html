@@ -13,7 +13,7 @@
   <nav class="light-blue lighten-1" role="navigation">
     <div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">Address Bundlr</a>
       <ul class="right hide-on-med-and-down">
-        <li><a href="" ui-sref="">Start</a></li>
+        <li><a href="" ui-sref="emails.start">Start</a></li>
       </ul>
 
       <ul id="nav-mobile" class="side-nav">
@@ -37,7 +37,7 @@
     </div>
   </div>
 
-  {{{ body }}}
+  <%- body | safe %>
 
 
   <footer class="page-footer orange">
