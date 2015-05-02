@@ -8,7 +8,7 @@
  * Controller of the addressBundlerApp
  */
 angular.module('addressBundlerApp')
-  .controller('EmailsSetupCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
+  .controller('EmailsSetupCtrl', ['$scope', '$http', '$log', 'DS', function ($scope, $http, $log, DS) {
     $scope.tasks = [];
 
     $scope.stepPos = 0;
@@ -18,6 +18,14 @@ angular.module('addressBundlerApp')
     	progress: '0',
     	message: 'Waiting to Google..',
     	url: '/api/addresses/capture-labels'
+    });
+
+    // window.jQuery('.collapsible').collapsible({
+    //     accordion: true
+    // });
+
+    window.jQuery(document).ready(function(){
+        window.jQuery('ul.tabs').tabs();
     });
 
     $scope.$evalAsync(function() {
@@ -33,15 +41,29 @@ angular.module('addressBundlerApp')
         });
     });
 
+    $scope.filterLabelsExclude = function(row) {
+        if (row.use === true) {
+            return false;
+        }
+        return true;
+    };
+
+    $scope.save = function() {
+        $scope.thisUser.use_labels = $scope.useLabels;
+        DS.save('user', $scope.thisUser._id);
+    };
+
     $scope.$watch('stepPos', function(step, previous) {
         if (step >= 0 && step != previous) {
-            console.log('step', step);
+
             switch(step) {
                 case 0:
                 default:
                     $scope.authorize();
                 case 1:
                     $scope.start();
+                case 2:
+                    $scope.currentTask.message = 'Configure Bundle Below..';
             }
         }
     });
@@ -49,7 +71,10 @@ angular.module('addressBundlerApp')
     $scope.start = function() {
 
         $http.get('/api/labels/setup').success(function(result) {
-            $log.info('result', result);
+            if (result.labels) {
+                $scope.thisLabels = result.labels;
+                $scope.stepPos += 1;
+            }
         }).catch(function(err) {
             $scope.currentTask.message = err.message ? err.message : err;
         });

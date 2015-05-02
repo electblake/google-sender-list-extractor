@@ -4,6 +4,7 @@ var mongoose = require('mongoose'),
 var UserSchema = new Schema({
 	email: { type: String, required: true },
 	name: { type: String },
+	use_labels: [{ id: String, labelListVisibility: String, messageListVisibility: String, name: String, type: String }],
 	auth: {
 		google: {
 			tokens: {

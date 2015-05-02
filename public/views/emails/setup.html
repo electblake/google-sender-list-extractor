@@ -1,7 +1,6 @@
-<div class="section no-pad-bot" id="index-banner">
+<!-- <div class="section no-pad-bot" id="index-banner">
   <div class="container">
-    <br><br>
-    <h1 class="header center orange-text">{{ currentTask.name }}</h1>
+    <h4 class="header center orange-text">{{ currentTask.name }}</h4>
     <div class="row center">
       <h5 class="header col s12 light">{{ currentTask.message }}</h5>
     </div>
@@ -19,23 +18,67 @@
     	</div>
     </div>
     <div class="row center">
-        <a href="/auth/google/authorize" class="btn-large google waves-effect waves-light" ng-if="stepPos == 0">
+        <a href="/auth/google/authorize" class="btn-large google waves-effect waves-light"
+            ng-if="stepPos == 0">
             Authorize Google
-        </a>
-		<a href="" ng-click="start()" id="download-button" class="btn-large waves-effect waves-light green" ng-if="stepPos == 1">
-            Start!
         </a>
 		<br><br>
     </div>
   </div>
-</div>
-<div class="container">
-	<div class="row">
-		<div class="col s12 m6">
-			<h5>Choose Label(s)</h5>
-		</div>
-		<div class="col s12 m6">
-			<h5>Sample Output</h5>
-		</div>
-	</div>
+</div> -->
+
+<div class="row">
+  <div class="col s12">
+    <ul class="tabs">
+      <li class="tab col s3"><a href="#test1">Connect Google</a></li>
+      <li class="tab col s3"><a class="active" href="#test2">Select Labels</a></li>
+      <li class="tab col s3"><a href="#test3">Test 3</a></li>
+      <li class="tab col s3"><a href="#test4">Test 4</a></li>
+    </ul>
+  </div>
+  <div id="test1" class="col s12">
+    <h3>Connect Google</h3>
+    <p>
+        <a href="/auth/google/authorize" class="btn google waves-effect waves-light">
+            Authorize Google
+        </a>
+    </p>
+  </div>
+  <div id="test2" class="col s12">
+    <h3>Select Labels</h3>
+    <a href="" ng-click="start()" id="download-button" class="btn waves-effect waves-light orange">
+        Pull Labels from Google
+    </a>
+    <a ng-if="useLabels && useLabels.length > 0" ref="" ng-click="save()" id="download-button" class="btn waves-effect waves-light green right">
+        Start Bundle Email Addresses..
+    </a>
+    <div class="row">
+        <div class="col s12 m6">
+            <p>
+                <strong>Will Exclude Labels..</strong>
+            </p>
+            <div class="" ng-repeat="label in thisLabels | filter: filterLabelsExclude">
+                
+                    {{ label.name }}
+                    {{ label.use }}
+                    <a href="" ng-click="label.use = true" class="right">use</a>
+                
+            </div>
+        </div>
+        <div class="col s12 m6">
+            <p>
+                <strong>Included Labels..</strong>
+                <div class="" ng-repeat="label in (useLabels = (thisLabels | filter: { use: true }))">
+                    
+                        {{ label.name }}
+                        {{ label.use }}
+                        <a href="" ng-click="label.use = false" class="right">remove</a>
+                    
+                </div>
+            </p>
+        </div>
+    </div>
+  </div>
+  <div id="test3" class="col s12">Test 3</div>
+  <div id="test4" class="col s12">Test 4</div>
 </div>

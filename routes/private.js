@@ -23,6 +23,7 @@ module.exports = function(app) {
 	app.use('/auth', require('./auth/session'));
 
 	// resources
+	app.use('/api/user', require('./user'));
 	app.use('/api/labels', require('./labels'));
 
 };

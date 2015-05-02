@@ -4,11 +4,7 @@ var User = require('../../../models/User');
 var expect = require('chai').expect;
 
 router.get('/authorize', function(req, res, next) {
-	if (!req.user) {
-		res.redirect(google.getAuthUrl());
-	} else {
-		res.redirect('/#/emails/setup');
-	}
+	res.redirect(google.getAuthUrl());
 });
 
 router.get('/success', function(req, res, next) {
@@ -28,7 +24,6 @@ router.get('/success', function(req, res, next) {
 		}
 		else {
 			var userDoc = null;
-			var isNewUser = false;
 
 			if (doc) {
 				userDoc = doc;
@@ -37,25 +32,18 @@ router.get('/success', function(req, res, next) {
 				}
 			} else {
 				userDoc = new User(newUser);
-
 			}
 
 			if (userDoc) {
 				req.user = userDoc;
-				if (isNewUser) {
-					userDoc.save(function(err, result) {
-						if (err) {
-							res.status(400).send(err);
-						} else {
-							req.session.userId = userDoc._id;
-							res.redirect('/#/emails/setup');
-						}
-					});
-				} else {
-					req.session.userId = userDoc._id;
-					req.session.touch();
-					res.redirect('/#/emails/setup');
-				}
+				userDoc.save(function(err, result) {
+					if (err) {
+						res.status(400).send(err);
+					} else {
+						req.session.userId = userDoc._id;
+						res.redirect('/#/emails/setup');
+					}
+				});
 			}
 
 		}

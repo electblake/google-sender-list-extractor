@@ -1,15 +1,23 @@
 angular.module('addressBundlerApp', [
+	'js-data',
 	'ui.router',
 	'addressBundlerConfig',
 	'addressBundlerDirectives',
 	'addressBundlerFilters',
 	'addressBundlerRun'
-]);
+]).run(['DS', function(DS) {
+	// DS.defineResource('user');
+}]);
 
 angular.module('addressBundlerConfig', []);
 angular.module('addressBundlerDirectives', []);
 angular.module('addressBundlerFilters', []);
+angular.module('addressBundlerServices', []);
 angular.module('addressBundlerRun', []);
+angular.module('addressBundlerConfig')
+  .config(['DSProvider', function (DSProvider) {
+    DSProvider.defaults.basePath = '/api'; // etc.
+  }]);
 angular.module('addressBundlerConfig')
 	.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
 
@@ -40,6 +48,22 @@ angular.module('addressBundlerConfig')
 'use strict';
 
 /**
+ * @ngdoc service
+ * @name addressBundlerApp.User
+ * @description
+ * # User
+ * Service in the addressBundlerApp.
+ */
+angular.module('addressBundlerServices')
+	.run(['DS', function(DS) {
+		// console.log('asdf');
+		DS.defineResource('user', {
+			idAttribute: '_id'
+		});
+	}]);
+'use strict';
+
+/**
  * @ngdoc function
  * @name addressBundlerApp.controller:AppRootCtrl
  * @description
@@ -47,16 +71,26 @@ angular.module('addressBundlerConfig')
  * Controller of the addressBundlerApp
  */
 angular.module('addressBundlerApp')
-  .controller('AppRootCtrl', ['$scope', '$http', '$log', '$rootScope', '$q', function ($scope, $http, $log, $rootScope, $q) {
+  .controller('AppRootCtrl', ['$scope', '$http', '$log', '$rootScope', '$q', 'DS', function ($scope, $http, $log, $rootScope, $q, DS) {
 
 	  	var loginSession = $q.defer();
 	  	$rootScope.loginSession = loginSession.promise;
 
     	$http.get('/auth/session').success(function(result) {
     	    loginSession.resolve(result);
+
     	}).catch(function(err) {
     		loginSession.reject(err);
     	});
+
+    	$rootScope.loginSession.then(function(result) {
+    		DS.find('user', result.userId).then(function(doc) {
+                $scope.$evalAsync(function() {
+                    $rootScope.thisUser = doc;
+                });
+            });
+    	});
+
   }]);
 
 'use strict';
@@ -96,7 +130,7 @@ angular.module('addressBundlerApp')
  * Controller of the addressBundlerApp
  */
 angular.module('addressBundlerApp')
-  .controller('EmailsSetupCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
+  .controller('EmailsSetupCtrl', ['$scope', '$http', '$log', 'DS', function ($scope, $http, $log, DS) {
     $scope.tasks = [];
 
     $scope.stepPos = 0;
@@ -106,6 +140,14 @@ angular.module('addressBundlerApp')
     	progress: '0',
     	message: 'Waiting to Google..',
     	url: '/api/addresses/capture-labels'
+    });
+
+    // window.jQuery('.collapsible').collapsible({
+    //     accordion: true
+    // });
+
+    window.jQuery(document).ready(function(){
+        window.jQuery('ul.tabs').tabs();
     });
 
     $scope.$evalAsync(function() {
@@ -121,15 +163,29 @@ angular.module('addressBundlerApp')
         });
     });
 
+    $scope.filterLabelsExclude = function(row) {
+        if (row.use === true) {
+            return false;
+        }
+        return true;
+    };
+
+    $scope.save = function() {
+        $scope.thisUser.use_labels = $scope.useLabels;
+        DS.save('user', $scope.thisUser._id);
+    };
+
     $scope.$watch('stepPos', function(step, previous) {
         if (step >= 0 && step != previous) {
-            console.log('step', step);
+
             switch(step) {
                 case 0:
                 default:
                     $scope.authorize();
                 case 1:
                     $scope.start();
+                case 2:
+                    $scope.currentTask.message = 'Configure Bundle Below..';
             }
         }
     });
@@ -137,7 +193,10 @@ angular.module('addressBundlerApp')
     $scope.start = function() {
 
         $http.get('/api/labels/setup').success(function(result) {
-            $log.info('result', result);
+            if (result.labels) {
+                $scope.thisLabels = result.labels;
+                $scope.stepPos += 1;
+            }
         }).catch(function(err) {
             $scope.currentTask.message = err.message ? err.message : err;
         });
