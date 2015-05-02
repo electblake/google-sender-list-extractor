@@ -1,5 +1,5 @@
 module.exports = function(app) {
-	app.use('/emails', require('./emails/start'));
+	app.use('/emails', require('./emails'));
 
 	// index
 	app.use('/', require('./pages'));

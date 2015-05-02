@@ -14,10 +14,13 @@
     "12factor-config": "^1.0.0",
     "12factor-dotenv": "^0.1.3",
     "body-parser": "^1.10.1",
+    "connect-redis": "^2.2.0",
     "cookie-parser": "^1.3.3",
     "express": "^4.10.8",
     "express-handlebars": "^1.1.0",
     "express-layout": "^0.1.0",
+    "express-session": "^1.11.1",
+    "googleapis": "^2.0.2",
     "lodash": "^3.6.0",
     "mongoose": "^3.8.21",
     "morgan": "^1.5.1",
@@ -25,7 +28,8 @@
     "node-gmail-api": "^0.3.0",
     "nunjucks": "^1.3.3",
     "read-package-json": "^1.2.7",
-    "serve-favicon": "^2.2.0"
+    "serve-favicon": "^2.2.0",
+    "winston": "^1.0.0"
   },
   "devDependencies": {
     "chai": "^2.2.0",

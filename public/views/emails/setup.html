@@ -1,0 +1,41 @@
+<div class="section no-pad-bot" id="index-banner">
+  <div class="container">
+    <br><br>
+    <h1 class="header center orange-text">{{ currentTask.name }}</h1>
+    <div class="row center">
+      <h5 class="header col s12 light">{{ currentTask.message }}</h5>
+    </div>
+    <div class="row center">
+    	<div class="preloader-wrapper big active" ng-if="currentTask.progress > 0">
+    	  <div class="spinner-layer spinner-blue">
+    	    <div class="circle-clipper left">
+    	      <div class="circle"></div>
+    	    </div><div class="gap-patch">
+    	      <div class="circle"></div>
+    	    </div><div class="circle-clipper right">
+    	      <div class="circle"></div>
+    	    </div>
+    	  </div>
+    	</div>
+    </div>
+    <div class="row center">
+        <a href="/auth/google/authorize" class="btn-large google waves-effect waves-light" ng-if="stepPos == 0">
+            Authorize Google
+        </a>
+		<a href="" ng-click="start()" id="download-button" class="btn-large waves-effect waves-light green" ng-if="stepPos == 1">
+            Start!
+        </a>
+		<br><br>
+    </div>
+  </div>
+</div>
+<div class="container">
+	<div class="row">
+		<div class="col s12 m6">
+			<h5>Choose Label(s)</h5>
+		</div>
+		<div class="col s12 m6">
+			<h5>Sample Output</h5>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,10 @@
+.btn {
+	&.facebook {
+		@extend .blue;
+		@extend .darken-4;
+	}
+	&.google {
+		@extend .light-blue;
+		@extend .darken-1;
+	}
+}

@@ -27,14 +27,18 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-// database
+/**
+ * Servies
+ */
 require('./lib/mongoose')(app);
+require('./lib/sessions')(app);
 
 /**
  * Routes
  */
 
 require('./routes/public')(app);
+require('./routes/private')(app);
 
 
 module.exports = app;

@@ -18,5 +18,10 @@ angular.module('addressBundlerConfig')
 			.state('emails.start', {
 				url: '/start?step-pos',
 				templateUrl: 'views/emails/start.html'
+			})
+			.state('emails.setup', {
+				url: '/setup?step-pos',
+				controller: 'EmailsSetupCtrl',
+				templateUrl: 'views/emails/setup.html'
 			});
 	}]);

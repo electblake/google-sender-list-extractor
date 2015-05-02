@@ -10,6 +10,7 @@ var nodemon = require('gulp-nodemon');
 // util
 var debug = require('gulp-debug');
 var gutil = require('gulp-util');
+var path = require('path');
 
 var src = {
 	scripts: './public/scripts',
@@ -22,8 +23,13 @@ var dist = {
 };
 
 gulp.task('sass', function() {
+
+	var includePaths = [path.resolve(__dirname, 'public', 'bower_components')];
+	console.log('includePaths', includePaths);
 	return gulp.src('./public/sass/**/*.scss')
-		.pipe(sass())
+		.pipe(sass({
+			includePaths: includePaths
+		}))
 		.pipe(gulp.dest(dist.styles))
 		.pipe(debug({ title: 'sass' }));
 });
@@ -31,7 +37,7 @@ gulp.task('sass', function() {
 gulp.task('scripts', function() {
 	return gulp.src('./public/scripts/**/*.js')
 		.pipe(concat('app.bundle.js'))
-		.pipe(uglify())
+		// .pipe(uglify())
 		.pipe(gulp.dest(dist.scripts))
 		.pipe(debug({ title: 'scripts' }));
 });

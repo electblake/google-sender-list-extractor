@@ -6,7 +6,6 @@ module.exports = function(app) {
 
 		var views = app.get('views');
 		var viewPath = path.join(views, req.params.path, req.params.filename + '.html');
-		console.log('viewPath', viewPath);
 
 		if (fs.existsSync(viewPath)) {
 			res.render(viewPath, {
