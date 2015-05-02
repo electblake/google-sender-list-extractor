@@ -25,7 +25,7 @@ router.get('/callback', function(req, res, next) {
 	    });
 	    
 	  } else {
-	  	res.redirect('/auth/google/authorize');
+	  	res.status(401).send('Google client.getToken ' + err.toString());
 	  }
 	});
 	

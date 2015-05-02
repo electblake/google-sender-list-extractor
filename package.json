@@ -5,7 +5,7 @@
   "homepage": "http://github.com/electblake/node-gmail-address-bundler",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "gulp",
     "test": "mocha"
   },
   "author": "",
@@ -22,7 +22,7 @@
     "express-session": "^1.11.1",
     "googleapis": "^2.0.2",
     "lodash": "^3.6.0",
-    "mongoose": "^3.8.21",
+    "mongoose": "^4.0.2",
     "morgan": "^1.5.1",
     "node-env-file": "^0.1.4",
     "node-gmail-api": "^0.3.0",

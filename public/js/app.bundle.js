@@ -13,11 +13,11 @@ angular.module('addressBundlerRun', []);
 angular.module('addressBundlerConfig')
 	.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
 
-		$urlRouterProvider.otherwise('/');
+		$urlRouterProvider.otherwise('/home');
 
 		$stateProvider
 			.state('home', {
-				'url': '/',
+				'url': '/home',
 				'templateUrl': 'views/home.html',
 				'controller': 'HomeCtrl'
 			})
@@ -136,7 +136,7 @@ angular.module('addressBundlerApp')
 
     $scope.start = function() {
 
-        $http.get('/api/labels/index').success(function(result) {
+        $http.get('/api/labels/setup').success(function(result) {
             $log.info('result', result);
         }).catch(function(err) {
             $scope.currentTask.message = err.message ? err.message : err;

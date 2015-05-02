@@ -2,35 +2,29 @@ var log = require('../../lib/logger');
 var cfg = require('../../lib/config');
 
 var router = require('express').Router();
-
 var auth_session = require('../lib/auth-session');
-var google = require('../../lib/google/');
-var gmail = google.google.gmail('v1');
 
-router.get('/index', auth_session, function(req, res, next) {
+var gLib = require('../../lib/google');
+var gmail = gLib.google.gmail('v1');
 
-	var auth = google.client;
-	// console.log('req.user', JSON.stringify(req.user, null, 4));
-	auth.setCredentials(req.user.auth.google.tokens);
+router.get('/setup', auth_session, function(req, res, next) {
+	if (req.user.email) {
 
-	var params = { userId: 'me', id: req.session.email, auth: auth };
+		var authClient = gLib.client;
+		authClient.setCredentials(req.user.auth.google.tokens)
+		var params = { userId: 'me', id: req.user.email, auth: authClient };
 
-	try {
-
-		gmail.users.labels.get(params, function(err, labels) {
+		gmail.users.labels.list(params, function(err, labels) {
 			if (err) {
-				console.error('error', err);
-				res.send('Error');
+				log.error(err);
+				res.status(400).send('Gmail User Labels Get ' + err.toString());
 			} else {
 				res.send(labels);
 			}
 		});
-
-	} catch (err) {
-		log.error(err);
+	} else {
+		res.status(401).send('Error: Session Email not Found, Login Required.');
 	}
-
-	next();
 });
 
 module.exports = router;

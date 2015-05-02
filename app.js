@@ -11,7 +11,6 @@ var express = require('express'),
 
 var app = express();
 
-// require('./lib/favicon')(app);
 require('./lib/views')(app);
 
 var publicFolder = 'public';
@@ -40,5 +39,13 @@ require('./lib/sessions')(app);
 require('./routes/public')(app);
 require('./routes/private')(app);
 
+// app.use(function(err, req, res, next) {
+// 	if (err) {
+// 		console.error(err.stack);
+// 		res.status(500).send('Something broke!');
+// 	} else {
+// 		next();
+// 	}
+// });
 
 module.exports = app;

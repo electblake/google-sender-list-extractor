@@ -28,6 +28,8 @@ router.get('/success', function(req, res, next) {
 		}
 		else {
 			var userDoc = null;
+			var isNewUser = false;
+
 			if (doc) {
 				userDoc = doc;
 				if (req.session.google.tokens) {
@@ -35,18 +37,25 @@ router.get('/success', function(req, res, next) {
 				}
 			} else {
 				userDoc = new User(newUser);
+
 			}
 
 			if (userDoc) {
-				// console.log('userDoc', userDoc);
-				userDoc.save(function(err, result) {
-					if (err) {
-						res.status(400).send(err);
-					} else {
-						req.session.userId = userDoc._id;
-						res.redirect('/#/emails/setup')
-					}
-				});
+				req.user = userDoc;
+				if (isNewUser) {
+					userDoc.save(function(err, result) {
+						if (err) {
+							res.status(400).send(err);
+						} else {
+							req.session.userId = userDoc._id;
+							res.redirect('/#/emails/setup');
+						}
+					});
+				} else {
+					req.session.userId = userDoc._id;
+					req.session.touch();
+					res.redirect('/#/emails/setup');
+				}
 			}
 
 		}

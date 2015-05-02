@@ -48,7 +48,7 @@ angular.module('addressBundlerApp')
 
     $scope.start = function() {
 
-        $http.get('/api/labels/index').success(function(result) {
+        $http.get('/api/labels/setup').success(function(result) {
             $log.info('result', result);
         }).catch(function(err) {
             $scope.currentTask.message = err.message ? err.message : err;

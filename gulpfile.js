@@ -25,7 +25,7 @@ var dist = {
 gulp.task('sass', function() {
 
 	var includePaths = [path.resolve(__dirname, 'public', 'bower_components')];
-	console.log('includePaths', includePaths);
+	gutil.log('sass includePaths: ', includePaths);
 	return gulp.src('./public/sass/**/*.scss')
 		.pipe(sass({
 			includePaths: includePaths
@@ -37,7 +37,6 @@ gulp.task('sass', function() {
 gulp.task('scripts', function() {
 	return gulp.src('./public/scripts/**/*.js')
 		.pipe(concat('app.bundle.js'))
-		// .pipe(uglify())
 		.pipe(gulp.dest(dist.scripts))
 		.pipe(debug({ title: 'scripts' }));
 });

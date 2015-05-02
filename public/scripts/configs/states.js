@@ -1,11 +1,11 @@
 angular.module('addressBundlerConfig')
 	.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
 
-		$urlRouterProvider.otherwise('/');
+		$urlRouterProvider.otherwise('/home');
 
 		$stateProvider
 			.state('home', {
-				'url': '/',
+				'url': '/home',
 				'templateUrl': 'views/home.html',
 				'controller': 'HomeCtrl'
 			})
