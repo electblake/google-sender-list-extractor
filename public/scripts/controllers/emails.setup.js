@@ -84,6 +84,7 @@ angular.module('addressBundlerApp')
                                 $scope.activateTab('tab-bundle');
                                 $scope.currentTask.name = 'Bundle and Save';
                                 $scope.currentTask.message = 'Bundling Email Addresses..';
+                                $scope.userBundles();
                                 break;
                         }
                 }
@@ -133,6 +134,7 @@ angular.module('addressBundlerApp')
             $scope.currentTask.message = err.message ? err.message : err;
         });
     };
+
     // step 2
     $scope.gapiCapture = function() {
         $scope.currentTask.progress = 10;
@@ -147,13 +149,16 @@ angular.module('addressBundlerApp')
             $scope.currentTask.message = err.message ? err.message : JSON.stringify(err, null, 2);
         });
     };
+
     // step 3
-    $scope.download = function() {
-
+    $scope.userBundles = function() {
+        $scope.thisBundles = [];
+        $http.get('/api/users/bundles').success(function(result) {
+            $scope.$evalAsync(function() {
+                $scope.thisBundles = result;
+            });
+        });
     };
 
-    $scope.getSample = function() {
-
-    };
 
   }]);

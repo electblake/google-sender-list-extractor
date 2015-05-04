@@ -40,7 +40,7 @@ router.get('/capture', auth_session, function(req, res, next) {
 
 		var base_params = { userId: 'me', id: req.user.email, auth: authClient, maxResults: 1000 };
 		var threads = [];
-		var threadLimit = 100;
+		var threadLimit = 0;
 
 		var getThreadMeta = function(threadId, cb) {
 			params.id = threadId;
@@ -74,7 +74,7 @@ router.get('/capture', auth_session, function(req, res, next) {
 							log.info('Threads Count:', threads.length);
 						}
 
-						if (result.nextPageToken && threads.length < threadLimit) {
+						if (result.nextPageToken) {
 							getThreadsLoop(result.nextPageToken);
 						} else {
 							next_label()
