@@ -24,6 +24,10 @@ module.exports = function(app) {
 
 	// resources
 	require('./users/restful')(app);
-	app.use('/api/labels', require('./labels'));
+
+	// google api interaction
+	app.use('/api/gapi', require('./gapi/labels'));
+	app.use('/api/gapi', require('./gapi/capture'));
+	app.use('/api/gapi', require('./gapi/bundle'));
 
 };

@@ -7,6 +7,7 @@
       <li class="tab col s3"><a href="#tab-bundle">Bundle!</a></li>
     </ul>
   </div>
+  <!-- Connect Google Account -->
   <div id="tab-connect-google" class="col s12">
     <h3>Connect Google</h3>
     <p>
@@ -15,6 +16,7 @@
         </a>
     </p>
   </div>
+  <!-- Select Labels to Capture Addresses From -->
   <div id="tab-select-labels" class="col s12">
     <h3>Select Labels</h3>
     <a href="" ng-click="setupLabels()" class="btn waves-effect waves-light orange">
@@ -44,6 +46,7 @@
         </div>
     </div>
   </div>
+  <!-- Run Capture Process -->
   <div id="tab-capture" class="col s12">
     <div class="section no-pad-bot" id="index-banner">
       <div class="container">
@@ -52,17 +55,20 @@
           <h5 class="header col s12 light">{{ currentTask.message }}</h5>
         </div>
         <div class="row center">
-          <div class="preloader-wrapper big active" ng-if="currentTask.progress > 0">
-            <div class="spinner-layer spinner-blue">
-              <div class="circle-clipper left">
-                <div class="circle"></div>
-              </div><div class="gap-patch">
-                <div class="circle"></div>
-              </div><div class="circle-clipper right">
-                <div class="circle"></div>
+          <div ng-if="currentTask.progress > 0 && currentTask.progress < 100">
+            <div class="preloader-wrapper big active">
+              <div class="spinner-layer spinner-blue">
+                <div class="circle-clipper left">
+                  <div class="circle"></div>
+                </div><div class="gap-patch">
+                  <div class="circle"></div>
+                </div><div class="circle-clipper right">
+                  <div class="circle"></div>
+                </div>
               </div>
             </div>
           </div>
+          <a href="" ng-click="gapiCapture()" ng-if="currentTask.progress <= 0">Begin Capture</a>
         </div>
       </div>
     </div>

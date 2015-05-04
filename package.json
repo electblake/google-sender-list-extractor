@@ -13,6 +13,7 @@
   "dependencies": {
     "12factor-config": "^1.0.0",
     "12factor-dotenv": "^0.1.3",
+    "async": "^0.9.0",
     "body-parser": "^1.10.1",
     "connect-redis": "^2.2.0",
     "cookie-parser": "^1.3.3",
@@ -21,7 +22,7 @@
     "express-layout": "^0.1.0",
     "express-session": "^1.11.1",
     "googleapis": "^2.0.2",
-    "lodash": "^3.6.0",
+    "lodash": "^3.8.0",
     "mongoose": "^3.9.7",
     "morgan": "^1.5.1",
     "node-env-file": "^0.1.4",

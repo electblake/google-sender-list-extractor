@@ -7,7 +7,7 @@ var auth_session = require('../lib/auth-session');
 var gLib = require('../../lib/google');
 var gmail = gLib.google.gmail('v1');
 
-router.get('/setup', auth_session, function(req, res, next) {
+router.get('/bundle', auth_session, function(req, res, next) {
 	if (req.user.email) {
 
 		var authClient = gLib.client;

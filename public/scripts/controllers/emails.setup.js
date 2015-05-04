@@ -9,23 +9,47 @@
  */
 angular.module('addressBundlerApp')
   .controller('EmailsSetupCtrl', ['$scope', '$http', '$log', 'DS', function ($scope, $http, $log, DS) {
-    $scope.tasks = [];
-
+    var _ = window._;
     $scope.stepPos = 0;
-
-    $scope.tasks.push({
-    	name: 'Get Started',
-    	progress: '0',
-    	message: 'Waiting to Google..',
-    	url: '/api/addresses/capture-labels'
-    });
+    $scope.currentTask = {
+        name: 'Welcome',
+        message: 'Initializing..',
+        progress: 0
+    };
 
     window.jQuery(document).ready(function(){
         window.jQuery('ul.tabs').tabs();
     });
 
-    $scope.$evalAsync(function() {
-	    $scope.currentTask = $scope.tasks.pop();
+    $scope.$watch('stepPos', function(step, previous) {
+        if (step >= 0 && step != previous) {
+
+            switch(step) {
+                case 0:
+                default:
+                    $scope.authorize();
+                case 1:
+                    $scope.start();
+                case 2:
+                    $scope.currentTask.message = 'Configure Bundle Below..';
+                case 3:
+
+                    window.jQuery('a[href="#tab-capture"]').click();
+                    $scope.currentTask.name = 'Capturing Email Addresses..';
+                    $scope.currentTask.message = 'Initializing..';
+
+                    $scope.tasks = [];
+                    $scope.tasks.push({
+                        name: 'Get Started',
+                        progress: '0',
+                        message: 'Waiting to Google..',
+                        url: '/api/gapi/capture'
+                    });
+
+                case 4:
+                    $scope.currentTask.message = 'Bundling Email Addresses..';
+            }
+        }
     });
 
     var onceSession = $scope.$watch('loginSession', function(sess, previous) {
@@ -47,7 +71,6 @@ angular.module('addressBundlerApp')
     $scope.save = function() {
         $scope.$evalAsync(function() {
             $scope.loggedInUser.labels = $scope.thisLabels;
-            // console.log('First label saved..', $scope.thisLabels[0]);
             DS.save('user', $scope.loggedInUser._id).then(function() {
                 $scope.stepPos += 1;
             }).catch(function(err) {
@@ -60,28 +83,8 @@ angular.module('addressBundlerApp')
 
     };
 
-    $scope.$watch('stepPos', function(step, previous) {
-        if (step >= 0 && step != previous) {
-
-            switch(step) {
-                case 0:
-                default:
-                    $scope.authorize();
-                case 1:
-                    $scope.start();
-                case 2:
-                    $scope.currentTask.message = 'Configure Bundle Below..';
-                case 3:
-                    $scope.currentTask.name = 'Capturing Email Addresses..';
-                    $scope.currentTask.message = 'Initializing..';
-                case 4:
-                    $scope.currentTask.message = 'Bundling Email Addresses..';
-            }
-        }
-    });
-
-    $scope.setupLabels = function() {
-        $http.get('/api/labels/setup').success(function(result) {
+    $scope.gapiLabels = function() {
+        $http.get('/api/gapi/labels').success(function(result) {
             if (result.labels) {
                 $scope.thisLabels = result.labels;
                 $scope.stepPos += 1;
@@ -90,6 +93,17 @@ angular.module('addressBundlerApp')
             $scope.currentTask.message = err.message ? err.message : err;
         });
     };
+
+    $scope.gapiCapture = function() {
+        $scope.currentTask.progress = 10;
+        $scope.currentTask.message = 'Capturing Google Threads.. (This Make Take Awhile)';
+        $http.get('/api/gapi/capture').success(function(result) {
+            $scope.currentTask.progress = 100;
+            $scope.currentTask.message = 'Finished! Continue to Bundling..';
+        }).catch(function(err) {
+            $scope.currentTask.message = err.message ? err.message : err;
+        });
+    }
 
     $scope.start = function() {
 
@@ -101,7 +115,7 @@ angular.module('addressBundlerApp')
                     $scope.thisLabels = user.labels;
                     $scope.stepPos += 1;
                 } else {
-                   $scope.setupLabels();
+                   $scope.gapiLabels();
                 }
             }
         });
