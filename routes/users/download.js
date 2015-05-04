@@ -2,7 +2,6 @@ var router = require('express').Router();
 var glob = require('glob');
 var _ = require('lodash');
 var path = require('path');
-var generate = require('csv-generate');
 
 router.get('/download/:filename', function(req, res) {
 	var filepath = path.resolve('user-files', req.user._id.toString(), req.params.filename);
