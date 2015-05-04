@@ -1,42 +1,13 @@
-<!-- <div class="section no-pad-bot" id="index-banner">
-  <div class="container">
-    <h4 class="header center orange-text">{{ currentTask.name }}</h4>
-    <div class="row center">
-      <h5 class="header col s12 light">{{ currentTask.message }}</h5>
-    </div>
-    <div class="row center">
-    	<div class="preloader-wrapper big active" ng-if="currentTask.progress > 0">
-    	  <div class="spinner-layer spinner-blue">
-    	    <div class="circle-clipper left">
-    	      <div class="circle"></div>
-    	    </div><div class="gap-patch">
-    	      <div class="circle"></div>
-    	    </div><div class="circle-clipper right">
-    	      <div class="circle"></div>
-    	    </div>
-    	  </div>
-    	</div>
-    </div>
-    <div class="row center">
-        <a href="/auth/google/authorize" class="btn-large google waves-effect waves-light"
-            ng-if="stepPos == 0">
-            Authorize Google
-        </a>
-		<br><br>
-    </div>
-  </div>
-</div> -->
-
 <div class="row">
   <div class="col s12">
     <ul class="tabs">
-      <li class="tab col s3"><a href="#test1">Connect Google</a></li>
-      <li class="tab col s3"><a class="active" href="#test2">Select Labels</a></li>
-      <li class="tab col s3"><a href="#test3">Test 3</a></li>
-      <li class="tab col s3"><a href="#test4">Test 4</a></li>
+      <li class="tab col s3"><a href="#tab-connect-google">Connect Google</a></li>
+      <li class="tab col s3"><a class="active" href="#tab-select-labels">Select Labels</a></li>
+      <li class="tab col s3"><a href="#tab-capture">Capture..</a></li>
+      <li class="tab col s3"><a href="#tab-bundle">Bundle!</a></li>
     </ul>
   </div>
-  <div id="test1" class="col s12">
+  <div id="tab-connect-google" class="col s12">
     <h3>Connect Google</h3>
     <p>
         <a href="/auth/google/authorize" class="btn google waves-effect waves-light">
@@ -44,10 +15,10 @@
         </a>
     </p>
   </div>
-  <div id="test2" class="col s12">
+  <div id="tab-select-labels" class="col s12">
     <h3>Select Labels</h3>
-    <a href="" ng-click="start()" id="download-button" class="btn waves-effect waves-light orange">
-        Pull Labels from Google
+    <a href="" ng-click="setupLabels()" class="btn waves-effect waves-light orange">
+        Refresh Labels from Google
     </a>
     <a ng-if="useLabels && useLabels.length > 0" ref="" ng-click="save()" id="download-button" class="btn waves-effect waves-light green right">
         Start Bundle Email Addresses..
@@ -58,27 +29,43 @@
                 <strong>Will Exclude Labels..</strong>
             </p>
             <div class="" ng-repeat="label in thisLabels | filter: filterLabelsExclude">
-                
-                    {{ label.name }}
-                    {{ label.use }}
-                    <a href="" ng-click="label.use = true" class="right">use</a>
-                
+              {{ label.name }}
+              <a href="" ng-click="label.use = true" class="right">use</a>
             </div>
         </div>
         <div class="col s12 m6">
             <p>
                 <strong>Included Labels..</strong>
-                <div class="" ng-repeat="label in (useLabels = (thisLabels | filter: { use: true }))">
-                    
-                        {{ label.name }}
-                        {{ label.use }}
-                        <a href="" ng-click="label.use = false" class="right">remove</a>
-                    
+                <div ng-repeat="label in (useLabels = (thisLabels | filter: { use: true }))">
+                  {{ label.name }}
+                  <a href="" ng-click="label.use = false" class="right">remove</a>
                 </div>
             </p>
         </div>
     </div>
   </div>
-  <div id="test3" class="col s12">Test 3</div>
-  <div id="test4" class="col s12">Test 4</div>
+  <div id="tab-capture" class="col s12">
+    <div class="section no-pad-bot" id="index-banner">
+      <div class="container">
+        <h4 class="header center orange-text">{{ currentTask.name }}</h4>
+        <div class="row center">
+          <h5 class="header col s12 light">{{ currentTask.message }}</h5>
+        </div>
+        <div class="row center">
+          <div class="preloader-wrapper big active" ng-if="currentTask.progress > 0">
+            <div class="spinner-layer spinner-blue">
+              <div class="circle-clipper left">
+                <div class="circle"></div>
+              </div><div class="gap-patch">
+                <div class="circle"></div>
+              </div><div class="circle-clipper right">
+                <div class="circle"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="tab-bundle" class="col s12">Test 4</div>
 </div>

@@ -20,12 +20,12 @@ angular.module('addressBundlerApp')
     		loginSession.reject(err);
     	});
 
+        var isLoggedIn = $q.defer();
+        $rootScope.isLoggedIn = isLoggedIn.promise;
+
     	$rootScope.loginSession.then(function(result) {
-    		DS.find('user', result.userId).then(function(doc) {
-                $scope.$evalAsync(function() {
-                    $rootScope.thisUser = doc;
-                });
-            });
+    		DS.find('user', result.userId);
+            DS.bindOne('user', result.userId, $rootScope, 'loggedInUser');
     	});
 
   }]);

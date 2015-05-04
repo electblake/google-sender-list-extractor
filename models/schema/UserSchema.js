@@ -1,10 +1,11 @@
 var mongoose = require('mongoose'),
 	Schema = mongoose.Schema;
+var LabelSchema = require('./LabelSchema');
 
 var UserSchema = new Schema({
 	email: { type: String, required: true },
 	name: { type: String },
-	use_labels: [{ id: String, labelListVisibility: String, messageListVisibility: String, name: String, type: String }],
+	labels: [LabelSchema],
 	auth: {
 		google: {
 			tokens: {

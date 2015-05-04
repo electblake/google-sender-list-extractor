@@ -20,10 +20,6 @@ angular.module('addressBundlerApp')
     	url: '/api/addresses/capture-labels'
     });
 
-    // window.jQuery('.collapsible').collapsible({
-    //     accordion: true
-    // });
-
     window.jQuery(document).ready(function(){
         window.jQuery('ul.tabs').tabs();
     });
@@ -49,8 +45,19 @@ angular.module('addressBundlerApp')
     };
 
     $scope.save = function() {
-        $scope.thisUser.use_labels = $scope.useLabels;
-        DS.save('user', $scope.thisUser._id);
+        $scope.$evalAsync(function() {
+            $scope.loggedInUser.labels = $scope.thisLabels;
+            // console.log('First label saved..', $scope.thisLabels[0]);
+            DS.save('user', $scope.loggedInUser._id).then(function() {
+                $scope.stepPos += 1;
+            }).catch(function(err) {
+                $log.error(err);
+            });
+        });
+    };
+
+    $scope.authorize = function() {
+
     };
 
     $scope.$watch('stepPos', function(step, previous) {
@@ -64,12 +71,16 @@ angular.module('addressBundlerApp')
                     $scope.start();
                 case 2:
                     $scope.currentTask.message = 'Configure Bundle Below..';
+                case 3:
+                    $scope.currentTask.name = 'Capturing Email Addresses..';
+                    $scope.currentTask.message = 'Initializing..';
+                case 4:
+                    $scope.currentTask.message = 'Bundling Email Addresses..';
             }
         }
     });
 
-    $scope.start = function() {
-
+    $scope.setupLabels = function() {
         $http.get('/api/labels/setup').success(function(result) {
             if (result.labels) {
                 $scope.thisLabels = result.labels;
@@ -78,7 +89,22 @@ angular.module('addressBundlerApp')
         }).catch(function(err) {
             $scope.currentTask.message = err.message ? err.message : err;
         });
+    };
 
+    $scope.start = function() {
+
+        var onceloggedInUser = $scope.$watch('loggedInUser', function(user, previous) {
+            if (user && $scope.loggedInUser) {
+                onceloggedInUser();
+
+                if ($scope.loggedInUser.labels && $scope.loggedInUser.labels.length > 0) {
+                    $scope.thisLabels = user.labels;
+                    $scope.stepPos += 1;
+                } else {
+                   $scope.setupLabels();
+                }
+            }
+        });
     };
 
   }]);
