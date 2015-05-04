@@ -8,7 +8,7 @@
  * Controller of the addressBundlerApp
  */
 angular.module('addressBundlerApp')
-  .controller('EmailsSetupCtrl', ['$scope', '$http', '$log', 'DS', function ($scope, $http, $log, DS) {
+  .controller('EmailsSetupCtrl', ['$scope', '$http', '$log', 'DS', '$timeout', function ($scope, $http, $log, DS, $timeout) {
     var _ = window._;
     $scope.stepPos = 0;
     $scope.currentTask = {
@@ -21,46 +21,6 @@ angular.module('addressBundlerApp')
         window.jQuery('ul.tabs').tabs();
     });
 
-    $scope.$watch('stepPos', function(step, previous) {
-        if (step >= 0 && step != previous) {
-
-            switch(step) {
-                case 0:
-                default:
-                    $scope.authorize();
-                case 1:
-                    $scope.start();
-                case 2:
-                    $scope.currentTask.message = 'Configure Bundle Below..';
-                case 3:
-
-                    window.jQuery('a[href="#tab-capture"]').click();
-                    $scope.currentTask.name = 'Capturing Email Addresses..';
-                    $scope.currentTask.message = 'Initializing..';
-
-                    $scope.tasks = [];
-                    $scope.tasks.push({
-                        name: 'Get Started',
-                        progress: '0',
-                        message: 'Waiting to Google..',
-                        url: '/api/gapi/capture'
-                    });
-
-                case 4:
-                    $scope.currentTask.message = 'Bundling Email Addresses..';
-            }
-        }
-    });
-
-    var onceSession = $scope.$watch('loginSession', function(sess, previous) {
-        onceSession();
-        $scope.loginSession.then(function(result) {
-            $scope.stepPos += 1;
-        }).catch(function(reason) {
-            $scope.currentTask.message = reason.message ? reason.message : reason;
-        });
-    });
-
     $scope.filterLabelsExclude = function(row) {
         if (row.use === true) {
             return false;
@@ -68,32 +28,112 @@ angular.module('addressBundlerApp')
         return true;
     };
 
-    $scope.save = function() {
-        $scope.$evalAsync(function() {
-            $scope.loggedInUser.labels = $scope.thisLabels;
-            DS.save('user', $scope.loggedInUser._id).then(function() {
-                $scope.stepPos += 1;
-            }).catch(function(err) {
-                $log.error(err);
-            });
-        });
+    $scope.stepTab = function($event) {
+        var index = $scope.getActiveTabIndex();
+        $scope.stepPos = index;
     };
 
-    $scope.authorize = function() {
+    $scope.getActiveTabIndex = function() {
+        var active_index = null;
+        _.each(window.jQuery('ul.tabs a'), function(tab, index) {
+            if (window.jQuery(tab).hasClass('active')) {
+                active_index = index;
+            }
+        });
+        return active_index;
+    };
 
+    $scope.getActiveTab = function() {
+        var active_index = $scope.getActiveTabIndex();
+        return window.jQuery('ul.tabs a')[active_index];
+    };
+
+    $scope.activateTab = _.debounce(function(name) {
+        // console.log('name', name);
+        if (!window.jQuery('ul.tabs a[href="#' + name + '"]').hasClass('active')) {
+            window.jQuery('ul.tabs').tabs('select_tab', name);
+        }
+    }, 500);
+
+    var onceLoggedInUser = $scope.$watch('loggedInUser', function(user) {
+        if (user) {
+            onceLoggedInUser();
+        
+            $scope.$watch('stepPos', function(step, previous) {
+                if (step || step === 0) {
+                    
+                        switch(step) {
+                            case 0:
+                                $scope.activateTab('tab-authorize');
+                                $scope.currentTask.name = 'Login with Google';
+                                $scope.currentTask.message = '';
+                                $scope.authorize();
+                                break;
+                            case 1:
+                                $scope.activateTab('tab-select-labels');
+                                $scope.currentTask.name = 'Select Labels';
+                                $scope.currentTask.message = 'Select message threads from specified labels';
+                                $scope.start();
+                                break;
+                            case 2:
+                                $scope.activateTab('tab-capture');
+                                $scope.currentTask.name = 'Capture Addresses';
+                                $scope.currentTask.message = 'Capture Bundle Below..';
+                                break;
+                            case 3:
+                                $scope.activateTab('tab-bundle');
+                                $scope.currentTask.name = 'Bundle and Save';
+                                $scope.currentTask.message = 'Bundling Email Addresses..';
+                                break;
+                        }
+                }
+            });
+        }
+
+    });
+
+    $scope.continue = function() {
+        $scope.stepPos += 1;
+    }
+
+    // step 0
+    $scope.authorize = function() {
+        // if ($scope.stepPos === 0) {
+        //     $scope.stepPos = 1;
+        // }
+    };
+
+    // step 1
+    $scope.start = function() {
+        if ($scope.loggedInUser.labels && $scope.loggedInUser.labels.length > 0) {
+            $scope.thisLabels = $scope.loggedInUser.labels;
+            // if (_.where($scope.thisLabels, { use: true }).length > 0) {
+            //     $scope.stepPos = 2;
+            // }
+        } else {
+           $scope.gapiLabels();
+        }
+    };
+
+    $scope.save = function() {
+        $scope.loggedInUser.labels = $scope.thisLabels;
+        DS.save('user', $scope.loggedInUser._id).then(function() {
+            $scope.stepPos = 2;
+        }).catch(function(err) {
+            $log.error(err);
+        });
     };
 
     $scope.gapiLabels = function() {
         $http.get('/api/gapi/labels').success(function(result) {
             if (result.labels) {
                 $scope.thisLabels = result.labels;
-                $scope.stepPos += 1;
             }
         }).catch(function(err) {
             $scope.currentTask.message = err.message ? err.message : err;
         });
     };
-
+    // step 2
     $scope.gapiCapture = function() {
         $scope.currentTask.progress = 10;
         $scope.currentTask.message = 'Capturing Google Threads.. (This Make Take Awhile)';
@@ -103,22 +143,14 @@ angular.module('addressBundlerApp')
         }).catch(function(err) {
             $scope.currentTask.message = err.message ? err.message : err;
         });
-    }
+    };
+    // step 3
+    $scope.download = function() {
 
-    $scope.start = function() {
+    };
 
-        var onceloggedInUser = $scope.$watch('loggedInUser', function(user, previous) {
-            if (user && $scope.loggedInUser) {
-                onceloggedInUser();
+    $scope.getSample = function() {
 
-                if ($scope.loggedInUser.labels && $scope.loggedInUser.labels.length > 0) {
-                    $scope.thisLabels = user.labels;
-                    $scope.stepPos += 1;
-                } else {
-                   $scope.gapiLabels();
-                }
-            }
-        });
     };
 
   }]);
