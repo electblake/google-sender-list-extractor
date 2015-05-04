@@ -139,9 +139,12 @@ angular.module('addressBundlerApp')
         $scope.currentTask.message = 'Capturing Google Threads.. (This Make Take Awhile)';
         $http.get('/api/gapi/capture').success(function(result) {
             $scope.currentTask.progress = 100;
-            $scope.currentTask.message = 'Finished! Continue to Bundling..';
+            // $scope.currentTask.message = 'Finished! Now bundle and download..';
+            $scope.currentTask.message = result.count + " Addresses Captured.";
+            $scope.currentTask.sample = result.sample;
         }).catch(function(err) {
-            $scope.currentTask.message = err.message ? err.message : err;
+            $scope.currentTask.progress = 0;
+            $scope.currentTask.message = err.message ? err.message : JSON.stringify(err, null, 2);
         });
     };
     // step 3

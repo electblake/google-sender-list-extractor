@@ -9,6 +9,12 @@ var gmail = gLib.google.gmail('v1');
 
 var _ = require('lodash');
 var async = require('async');
+var fs = require('fs-extra');
+var path = require('path');
+
+function getRandomArbitrary(min, max) {
+    return Math.random() * (max - min) + min;
+}
 
 function getEmailsFromString(input) {
   var ret = [];
@@ -34,13 +40,13 @@ router.get('/capture', auth_session, function(req, res, next) {
 
 		var base_params = { userId: 'me', id: req.user.email, auth: authClient, maxResults: 1000 };
 		var threads = [];
-		var threadLimit = 500;
+		var threadLimit = 100;
 
 		var getThreadMeta = function(threadId, cb) {
 			params.id = threadId;
 			params.format = "metadata";
 			gmail.users.threads.get(params, function(err, result) {
-				console.log('result', result);
+				// console.log('result', result);
 				cb(null, result);
 			});
 		};
@@ -85,35 +91,54 @@ router.get('/capture', auth_session, function(req, res, next) {
 				res.status(400).send('Gmail User Threads Get ' + err.toString());
 			} else {
 
+				var contacts = [];
+
 				// populate thread meta
 				async.map(threads, function(thread, next_thread) {
 					log.debug('Metaing Thread', thread.id);
 					params = _.merge(base_params, { id: thread.id })
 					gmail.users.threads.get(params, function(err, thread_info) {
-						// log.debug('meta', meta);
 						if (err) {
 							next_thread(err);
 						} else {
-
-							var contacts = {};
 							_.each(thread_info.messages, function(message, next_message) {
 								var headers = message.payload.headers;
 								var subject = _.find(headers, { name: 'Subject' }).value;
-								var from = getEmailsFromString(_.find(headers, { name: 'From' }).value)[0];
+								var from = _.find(headers, { name: 'From' }).value;
+								var date = _.find(headers, { name: 'Date' }).value;
+								var dupes = _.where(contacts, { from: from });
 
-								contacts[from] = { subject: subject, from: from };
+								if (!dupes || dupes.length < 1) {
+									contacts.push({ subject: subject, from: from, date: date });
+								}
 							});
-							log.debug('contacts', contacts);
 
-							next_thread(null, contacts);
+							next_thread(null);
 						}
 					});
-				}, function(err, contacts) {
+				}, function(err) {
 					if (err) {
 						log.error(err);
 						res.status(400).send(err);
 					} else {
-						res.send({ contacts: contacts });
+
+						var report = {
+							count: contacts.length,
+							sample: contacts[0]
+						};
+
+						var user_files = path.resolve(path.join('user-files', req.user._id.toString()));
+
+						fs.ensureDirSync(user_files);
+
+						fs.writeFile(path.join(user_files, contacts.length+'-contacts--'+(new Date).getTime()+'.json'), JSON.stringify(contacts, null, 2), function(err, result) {
+							if (err) {
+								log.error(err);
+								res.status(400).send(err);
+							} else {
+								res.send(report);
+							}
+						});
 					}
 				});
 			}

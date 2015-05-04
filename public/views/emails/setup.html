@@ -88,6 +88,11 @@
           <a href="" ng-click="gapiCapture()" ng-if="currentTask.progress <= 0" class="btn waves-effect waves-light green">
             Run Capture Process
           </a>
+          <div class="card-panel" ng-if="currentTask.sample">
+            Subject: {{ currentTask.sample.subject }}<br />
+            Date: {{ currentTask.sample.date }}<br />
+            From: {{ currentTask.sample.from }}
+          </div>
         </div>
       </div>
     </div>
