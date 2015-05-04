@@ -6,7 +6,8 @@
   "main": "index.js",
   "scripts": {
     "start": "gulp",
-    "test": "mocha"
+    "test": "mocha",
+    "postinstall": "./node_modules/bower/bin/bower install"
   },
   "author": "",
   "license": "ISC",
@@ -15,6 +16,7 @@
     "12factor-dotenv": "^0.1.3",
     "async": "^0.9.0",
     "body-parser": "^1.10.1",
+    "bower": "^1.4.1",
     "chai": "^2.3.0",
     "connect-redis": "^2.2.0",
     "cookie-parser": "^1.3.3",

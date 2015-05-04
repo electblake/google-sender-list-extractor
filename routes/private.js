@@ -3,7 +3,7 @@ module.exports = function(app) {
 	// populate req.user if we have it (like passportjs)
 	var User = require('../models/User');
 	app.use(function(req, res, next) {
-		if (req.session.userId && !req.user) {
+		if (req.session && req.session.userId && !req.user) {
 			User.findById(req.session.userId, function(err, user) {
 				if (user) {
 					req.user = user;
