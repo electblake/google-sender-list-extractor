@@ -51,7 +51,7 @@ router.get('/capture', auth_session, function(req, res, next) {
 			});
 		};
 
-		async.each(label_ids, function(label_id, next_label) {
+		async.eachLimit(label_ids, 2, function(label_id, next_label) {
 
 			var params = base_params;
 				params.labelIds = label_id;
@@ -94,7 +94,7 @@ router.get('/capture', auth_session, function(req, res, next) {
 				var contacts = [];
 
 				// populate thread meta
-				async.map(threads, function(thread, next_thread) {
+				async.mapLimit(threads, 5, function(thread, next_thread) {
 					log.debug('Metaing Thread', thread.id);
 					params = _.merge(base_params, { id: thread.id })
 					gmail.users.threads.get(params, function(err, thread_info) {

@@ -41,6 +41,11 @@ angular.module('addressBundlerConfig')
 				'templateUrl': 'views/home.html',
 				'controller': 'HomeCtrl'
 			})
+			.state('logout', {
+				'controller': 'LogoutCtrl',
+				'url': '/logout',
+				'template': '<div ui-view></div>'
+			})
 			.state('emails', {
 				'abstract': true,
 				'controller': 'EmailsAbstractCtrl',
@@ -306,4 +311,21 @@ angular.module('addressBundlerApp')
 angular.module('addressBundlerApp')
   .controller('HomeCtrl', ['$scope', '$log', function ($scope, $log) {
    	$log.debug('HomeCtrl');
+  }]);
+'use strict';
+
+/**
+ * @ngdoc function
+ * @name addressBundlerApp.controller:LogoutCtrl
+ * @description
+ * # LogoutCtrl
+ * Controller of the addressBundlerApp
+ */
+angular.module('addressBundlerApp')
+  .controller('LogoutCtrl', ['$scope', '$http', '$log', '$rootScope', '$q', '$state', function ($scope, $http, $log, $rootScope, $q, $state) {
+
+        $http.get('/logout').success(function() {
+            $state.go('home');
+        });
+
   }]);
