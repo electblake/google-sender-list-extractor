@@ -106,22 +106,17 @@
           </div>
         </div>
         <div class="row">
+          <h6>Sample</h6>
           <ul class="collection" ng-if="currentTask.report.sample">
               <li class="collection-item avatar">
                 <img src="http://www.gravatar.com/avatar/{{ currentTask.report.sample.email | gravatar }}" class="circle"/>
-                <span class="title">Sample Capture</span>
+                <span class="title">{{ currentTask.report.sample.from }}</span>
                 <p>
-                  {{ currentTask.report.sample.from }}<br />
-                  <span class="grey-text"><strong>Subject:</strong> {{ currentTask.report.sample.subject }}</span><br />
+                  <span class="right"><strong>Date:</strong> {{ currentTask.report.sample.date }}</span>
+                  <span class="grey-text">
+                    <strong>Subject:</strong> {{ currentTask.report.sample.subject }}<br />
+                  </span>
                 </p>
-              </li>
-              <li class="collection-item">
-                <span class="title">Sample Date</span>
-                <p class="grey-text">{{ currentTask.report.sample.date }}</p>
-              </li>
-              <li class="collection-item">
-                <span class="title">Duplicate Ratio</span>
-                <p class="grey-text">{{ currentTask.report.duplicate_ratio }}</p>
               </li>
           </ul>
         </div>
