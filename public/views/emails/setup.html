@@ -1,24 +1,26 @@
+<ul class="tabs z-depth-1" ng-click="stepTab($event)">
+  <li class="tab col s3">
+    <a class="active"  ng-class="{ 'grey-text': stepPos >= 1 }" href="#tab-authorize">Connect Google</a>
+  </li>
+  <li class="tab col s3">
+    <a href="#tab-select-labels" ng-class="{ 'grey-text': stepPos >= 2 }" ng-show="loggedInUser._id">Select Labels</a>
+  </li>
+  <li class="tab col s3">
+    <a href="#tab-capture" ng-class="{ 'grey-text': stepPos >= 3 }" ng-show="loggedInUser._id">Capture..</a>
+  </li>
+  <li class="tab col s3">
+    <a href="#tab-bundle" ng-show="loggedInUser._id">Bundle!</a>
+  </li>
+</ul>
+<br />
 <div class="row">
-  <div class="col s12">
-    <ul class="tabs" ng-click="stepTab($event)">
-      <li class="tab col s3">
-        <a class="active"  ng-class="{ 'grey-text': stepPos >= 1 }" href="#tab-authorize">Connect Google</a>
-      </li>
-      <li class="tab col s3">
-        <a href="#tab-select-labels" ng-class="{ 'grey-text': stepPos >= 2 }" ng-show="loggedInUser._id">Select Labels</a>
-      </li>
-      <li class="tab col s3">
-        <a href="#tab-capture" ng-class="{ 'grey-text': stepPos >= 3 }" ng-show="loggedInUser._id">Capture..</a>
-      </li>
-      <li class="tab col s3">
-        <a href="#tab-bundle" ng-show="loggedInUser._id">Bundle!</a>
-      </li>
-    </ul>
-  </div>
+  <!-- <div class="col s12">
+    
+  </div> -->
   <!-- <h2 class="center">{{ currentTask.name }}</h2> -->
   <!-- Connect Google Account -->
   <div id="tab-authorize" class="col s12">
-    <h4 class="header center orange-text">{{ currentTask.name }}</h4>
+    <h4 class="header center blue-text text-darken-2">{{ currentTask.name }}</h4>
     <div class="row center">
       <h5 class="header col s12 light">{{ currentTask.message }}</h5>
     </div>
@@ -38,11 +40,11 @@
   </div>
   <!-- Select Labels to Capture Addresses From -->
   <div id="tab-select-labels" class="col s12">
-    <h4 class="header center orange-text">{{ currentTask.name }}</h4>
-    <div class="row center">
-      <h5 class="header col s12 light">{{ currentTask.message }}</h5>
-    </div>
+    <h4 class="header center blue-text text-darken-2">{{ currentTask.name }}</h4>
     <div class="container">
+      <div class="row center">
+        <h5 class="header col s12 light">{{ currentTask.message }}</h5>
+      </div>
       <div class="row">
         <div class="input-field col s6">
           <label>Capture Last</label><br />
@@ -68,25 +70,27 @@
         Start Capture <i class="mdi-navigation-arrow-forward"></i>
       </a>
     </p>
-    <div class="row">
-        <div class="col s12 m6">
-            <p>
-                <strong>Will Exclude Labels..</strong>
-            </p>
-            <div class="" ng-repeat="label in thisLabels | filter: filterLabelsExclude">
-              {{ label.name }}
-              <a href="" ng-click="label.use = true" class="right">use</a>
-            </div>
-        </div>
-        <div class="col s12 m6">
-            <p>
-                <strong>Included Labels..</strong>
-                <div ng-repeat="label in (useLabels = (thisLabels | filter: { use: true }))">
-                  {{ label.name }}
-                  <a href="" ng-click="label.use = false" class="right">remove</a>
-                </div>
-            </p>
-        </div>
+    <div class="container">
+      <div class="row">
+          <div class="col s12 m6">
+              <p>
+                  <strong>Will Exclude Labels..</strong>
+              </p>
+              <div class="" ng-repeat="label in thisLabels | filter: filterLabelsExclude">
+                {{ label.name }}
+                <a href="" ng-click="label.use = true" class="right">use</a>
+              </div>
+          </div>
+          <div class="col s12 m6">
+              <p>
+                  <strong>Included Labels..</strong>
+                  <div ng-repeat="label in (useLabels = (thisLabels | filter: { use: true }))">
+                    {{ label.name }}
+                    <a href="" ng-click="label.use = false" class="right">remove</a>
+                  </div>
+              </p>
+          </div>
+      </div>
     </div>
   </div>
   <!-- Run Capture Process -->
@@ -94,7 +98,7 @@
     <div class="section no-pad-bot" id="index-banner">
       <div class="container">
         <div class="row center">
-          <h4 class="header orange-text">{{ currentTask.name }}</h4>
+          <h4 class="header blue-text text-darken-2">{{ currentTask.name }}</h4>
           <h5 class="header col s12 light">{{ currentTask.message }}</h5>
           <a href="" ng-click="gapiCapture()" ng-if="currentTask.progress <= 0" class="btn waves-effect waves-light green">
             Run Capture Process
@@ -124,7 +128,7 @@
     </div>
   </div>
   <div id="tab-bundle" class="col s12">
-    <h4 class="header center orange-text">{{ currentTask.name }}</h4>
+    <h4 class="header center blue-text text-darken-2">{{ currentTask.name }}</h4>
     <div class="row center">
       <h5 class="header col s12 light">{{ currentTask.message }}</h5>
     </div>
