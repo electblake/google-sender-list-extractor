@@ -2,8 +2,9 @@ var router = require('express').Router();
 var glob = require('glob');
 var _ = require('lodash');
 var path = require('path');
+var auth_session = require('../lib/auth-session');
 
-router.get('/download/:filename', function(req, res) {
+router.get('/download/:filename', auth_session, function(req, res) {
 
 	var filepath = path.resolve('user-files', req.user._id.toString(), req.params.filename + '.json');
 	res.setHeader('Content-disposition', 'attachment; filename='+req.params.filename + '.csv');
