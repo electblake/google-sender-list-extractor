@@ -10,6 +10,8 @@
 angular.module('addressBundlerApp')
   .controller('AppRootCtrl', ['$scope', '$http', '$log', '$rootScope', '$q', 'DS', function ($scope, $http, $log, $rootScope, $q, DS) {
 
+        var _ = window._;
+
 	  	var loginSession = $q.defer();
 	  	$rootScope.loginSession = loginSession.promise;
 
@@ -28,12 +30,17 @@ angular.module('addressBundlerApp')
             });
     	});
 
+        $rootScope.PageMeta = {
+            title: '',
+            description: ''
+        };
 
-        $rootScope.pageview = function() {
+
+        $rootScope.pageview = _.debounce(function() {
             ga('send', 'pageview', {
                 page: location.pathname + location.search  + location.hash
             });
-        };
+        }, 500);
 
         $rootScope.gaevent = function(category, action, label, value) {
             ga('send', 'event',

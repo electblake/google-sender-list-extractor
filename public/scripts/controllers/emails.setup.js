@@ -8,7 +8,7 @@
  * Controller of the addressBundlerApp
  */
 angular.module('addressBundlerApp')
-  .controller('EmailsSetupCtrl', ['$scope', '$http', '$log', 'DS', '$timeout', function ($scope, $http, $log, DS, $timeout) {
+  .controller('EmailsSetupCtrl', ['$scope', '$http', '$log', 'DS', '$timeout', '$rootScope', function ($scope, $http, $log, DS, $timeout, $rootScope) {
     var _ = window._;
     $scope.stepPos = 0;
     $scope.currentTask = {
@@ -75,9 +75,6 @@ angular.module('addressBundlerApp')
 
     $scope.$watch('stepPos', function(step, previous) {
         if (step || step === 0) {
-
-            $scope.gaevent('setup', 'email-capture', 'step', step);
-
             switch(step) {
                 case 0:
                     $scope.activateTab('tab-authorize');
@@ -110,19 +107,14 @@ angular.module('addressBundlerApp')
                     });
                     break;
             }
-            $scope.pageview();
+
+            $rootScope.$evalAsync(function() {
+                $rootScope.PageMeta.title = 'Email Setup - Step ' + $scope.stepPos;
+                $scope.pageview();
+                $scope.gaevent('setup', 'email-capture', 'step', step);
+            });
         }
     });
-
-    // var onceLoggedInUser = $scope.$watch('loggedInUser', function(user) {
-    //     if (user) {
-    //         onceLoggedInUser();
-        
-            
-    //     }
-
-    // });
-
 
     $scope.continue = function() {
         $scope.stepPos += 1;
@@ -137,9 +129,6 @@ angular.module('addressBundlerApp')
     $scope.start = function() {
         if ($scope.loggedInUser.labels && $scope.loggedInUser.labels.length > 0) {
             $scope.thisLabels = $scope.loggedInUser.labels;
-            // if (_.where($scope.thisLabels, { use: true }).length > 0) {
-            //     $scope.stepPos = 2;
-            // }
         } else {
            $scope.gapiLabels();
         }
@@ -171,8 +160,7 @@ angular.module('addressBundlerApp')
         $scope.currentTask.message = 'Capturing Google Threads.. (This Make Take Awhile)';
         $http.get('/api/gapi/capture').success(function(result) {
             $scope.currentTask.progress = 100;
-            // $scope.currentTask.message = 'Finished! Now bundle and download..';
-            $scope.currentTask.message = result.count + " Addresses Captured.";
+            $scope.currentTask.message = result.count + " Addresses Captured";
             $scope.currentTask.sample = result.sample;
         }).catch(function(err) {
             $scope.currentTask.progress = 0;

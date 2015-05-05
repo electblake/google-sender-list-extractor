@@ -23,6 +23,7 @@ angular.module('addressBundlerConfig')
 			})
 			.state('emails.start', {
 				url: '/start?step-pos',
+				controller: 'EmailsStartCtrl',
 				templateUrl: 'views/emails/start.html'
 			})
 			.state('emails.setup', {

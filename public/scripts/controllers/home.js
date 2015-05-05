@@ -8,6 +8,8 @@
  * Controller of the addressBundlerApp
  */
 angular.module('addressBundlerApp')
-  .controller('HomeCtrl', ['$scope', '$log', function ($scope, $log) {
+  .controller('HomeCtrl', ['$scope', '$log', '$rootScope', function ($scope, $log, $rootScope) {
+
+  	$rootScope.PageMeta.title = 'Capture Incoming Email Addresses from Google';
    	$scope.pageview();
   }]);

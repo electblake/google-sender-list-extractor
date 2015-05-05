@@ -8,6 +8,9 @@
  * Controller of the addressBundlerApp
  */
 angular.module('addressBundlerApp')
-  .controller('EmailsStartCtrl', ['$scope', function ($scope) {
+  .controller('EmailsStartCtrl', ['$scope', '$rootScope', function ($scope, $rootScope) {
+  	$rootScope.$evalAsync(function() {
+  		$rootScope.PageMeta.title = 'Getting Started';
+  	});
     $scope.pageview();
   }]);
