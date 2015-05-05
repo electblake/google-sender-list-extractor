@@ -1,3 +1,20 @@
+### 0.1.5 (2015-05-05)
+
+
+#### Bug Fixes
+
+* **bundles:** downloads and auth_session ([e553290b](http://github.com/electblake/node-gmail-address-bundler/commit/e553290bff5163a651d48bf67dd543272f22a914))
+
+
+#### Features
+
+* **bundle:** parse from header into name and email ([4418cd0b](http://github.com/electblake/node-gmail-address-bundler/commit/4418cd0b8a964b393d7da4b482c14773d9560bcd))
+* **capture:**
+  * better naming, ratio explanation ([996589a4](http://github.com/electblake/node-gmail-address-bundler/commit/996589a4de2454e5113c860f71c75af962fe6efc))
+  * added more cool meta in filename output csv ([cdcac6fe](http://github.com/electblake/node-gmail-address-bundler/commit/cdcac6fed91478d620d5fd9942a1aeecf0f58ec3))
+* **nodetime:** added nodetime perf monitoring ([2ee689e8](http://github.com/electblake/node-gmail-address-bundler/commit/2ee689e81682030c462c0bcc80509b06f3c2b87b))
+
+
 ### 0.1.4 (2015-05-05)
 
 
