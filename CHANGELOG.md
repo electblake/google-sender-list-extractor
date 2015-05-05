@@ -1,3 +1,13 @@
+### 0.1.6 (2015-05-05)
+
+
+#### Bug Fixes
+
+* **capture:**
+  * let gapi fail gracefully to salvage all-or-nothing requests @todo use writestrea ([1635cdf5](http://github.com/electblake/node-gmail-address-bundler/commit/1635cdf5c8893adda6f039287e44fade7f81f50d))
+  * lowered concurrency to gapi ([d6f81031](http://github.com/electblake/node-gmail-address-bundler/commit/d6f81031b7cd565cd3a0d5c17505daca6dcdc14a))
+
+
 ### 0.1.5 (2015-05-05)
 
 
