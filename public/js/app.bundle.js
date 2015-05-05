@@ -1,4 +1,5 @@
 angular.module('addressBundlerApp', [
+	'angular-md5',
 	'js-data',
 	'ui.router',
 	'addressBundlerConfig',
@@ -229,7 +230,7 @@ angular.module('addressBundlerApp')
                 case 2:
                     $scope.activateTab('tab-capture');
                     $scope.currentTask.name = 'Capture Addresses';
-                    $scope.currentTask.message = 'Capture Bundle Below..';
+                    $scope.currentTask.message = 'Ready? (to go get a coffee)';
                     $scope.checkSession();
                     break;
                 case 3:
@@ -291,11 +292,11 @@ angular.module('addressBundlerApp')
     // step 2
     $scope.gapiCapture = function() {
         $scope.currentTask.progress = 10;
-        $scope.currentTask.message = 'Capturing Google Threads.. (This Make Take Awhile)';
+        $scope.currentTask.message = 'Capturing Google Threads.. (This Will Take Awhile)';
         $http.get('/api/gapi/capture').success(function(result) {
             $scope.currentTask.progress = 100;
             $scope.currentTask.message = result.count + " Addresses Captured";
-            $scope.currentTask.sample = result.sample;
+            $scope.currentTask.report = result;
         }).catch(function(err) {
             $scope.currentTask.progress = 0;
             $scope.currentTask.message = err.message ? err.message : JSON.stringify(err, null, 2);

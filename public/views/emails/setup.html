@@ -52,6 +52,7 @@
           <br />
           <select class="browser-default" ng-model="loggedInUser.capture.after_unit">
             <option value="" disabled>Choose Your Range</option>
+            <option value="hours">Hours</option>
             <option value="days">Days</option>
             <option value="months">Months</option>
             <option value="years">Years</option>
@@ -92,32 +93,37 @@
   <div id="tab-capture" class="col s12">
     <div class="section no-pad-bot" id="index-banner">
       <div class="container">
-        <h4 class="header center orange-text">{{ currentTask.name }}</h4>
         <div class="row center">
+          <h4 class="header orange-text">{{ currentTask.name }}</h4>
           <h5 class="header col s12 light">{{ currentTask.message }}</h5>
-        </div>
-        <div class="row center">
-          <div ng-if="currentTask.progress > 0 && currentTask.progress < 100">
-            <div class="preloader-wrapper big active">
-              <div class="spinner-layer spinner-blue">
-                <div class="circle-clipper left">
-                  <div class="circle"></div>
-                </div><div class="gap-patch">
-                  <div class="circle"></div>
-                </div><div class="circle-clipper right">
-                  <div class="circle"></div>
-                </div>
-              </div>
-            </div>
-          </div>
           <a href="" ng-click="gapiCapture()" ng-if="currentTask.progress <= 0" class="btn waves-effect waves-light green">
             Run Capture Process
           </a>
-          <div class="card-panel" ng-if="currentTask.sample">
-            Subject: {{ currentTask.sample.subject }}<br />
-            Date: {{ currentTask.sample.date }}<br />
-            From: {{ currentTask.sample.from }}
+          <div ng-if="currentTask.progress > 0 && currentTask.progress < 100">
+            <div class="progress">
+              <div class="indeterminate"></div>
+            </div>
           </div>
+        </div>
+        <div class="row">
+          <ul class="collection" ng-if="currentTask.report.sample">
+              <li class="collection-item avatar">
+                <img src="http://www.gravatar.com/avatar/{{ currentTask.report.sample.email | gravatar }}" class="circle"/>
+                <span class="title">Sample Capture</span>
+                <p>
+                  {{ currentTask.report.sample.from }}<br />
+                  <span class="grey-text"><strong>Subject:</strong> {{ currentTask.report.sample.subject }}</span><br />
+                </p>
+              </li>
+              <li class="collection-item">
+                <span class="title">Sample Date</span>
+                <p class="grey-text">{{ currentTask.report.sample.date }}</p>
+              </li>
+              <li class="collection-item">
+                <span class="title">Duplicate Ratio</span>
+                <p class="grey-text">{{ currentTask.report.duplicate_ratio }}</p>
+              </li>
+          </ul>
         </div>
       </div>
     </div>

@@ -102,6 +102,7 @@ router.get('/capture', auth_session, function(req, res, next) {
 			} else {
 
 				var contacts = [];
+				var skipCount = 0;
 				var query_estimate = threads.length;
 				var threadQueryCount = 0;
 				log.info('--> Thread Meta, estimated:', threads.length, 'queries from', pageCount, 'pages');
@@ -109,7 +110,8 @@ router.get('/capture', auth_session, function(req, res, next) {
 				// populate thread meta
 				async.mapLimit(threads, 220, function(thread, next_thread) {
 					threadQueryCount += 1;
-					log.debug('------> Meta Thread', thread.id, Math.ceil(threadQueryCount / query_estimate * 100)+'%', thread.snippet);
+					var thread_progress = Math.ceil(threadQueryCount / query_estimate * 100)+'%';
+					log.debug('----> Meta Threads', thread_progress, 'on', thread.id, thread.snippet);
 
 					params = _.merge(base_params, { id: thread.id })
 					gmail.users.threads.get(params, function(err, thread_info) {
@@ -128,7 +130,8 @@ router.get('/capture', auth_session, function(req, res, next) {
 								if (!dupes || dupes.length < 1) {
 									contacts.push({ subject: subject, from: from, date: date });
 								} else {
-									log.debug('From', from, 'is duplicate', dupes);
+									skipCount += 1;
+									// log.warn('From', from, 'is duplicate', dupes);
 								}
 							});
 							// log.debug('----> Taken:', watcher(params));
@@ -140,19 +143,37 @@ router.get('/capture', auth_session, function(req, res, next) {
 						log.error(err);
 						res.status(400).send(err);
 					} else {
-						log.info('--> Finishing..');
+
+						var duplicate_ratio = (contacts.length / skipCount).toPrecision(2);
+
 						var report = {
 							count: contacts.length,
-							sample: contacts[0]
+							sample: contacts[0],
+							duplicate_ratio: duplicate_ratio
 						};
+
+						log.info('--> Finishing..');
+						log.info('----> Duplicate Ratio', duplicate_ratio);
 
 						if (contacts.length > 0) {
 							var user_files = path.resolve(path.join('user-files', req.user._id.toString()));
-							log.info('----> Writing', contacts.length, 'contacts to', user_files);
-
 							fs.ensureDirSync(user_files);
 
-							fs.writeFile(path.join(user_files, contacts.length+'-contacts--'+(new Date).getTime()+'.json'), JSON.stringify(contacts, null, 2), function(err, result) {
+							log.info('----> Writing', contacts.length, 'contacts to', user_files);
+
+							var filename_to = [];
+							
+								filename_to.push(contacts.length);
+								filename_to.push('contacts');
+							
+								filename_to.push(duplicate_ratio);
+								filename_to.push('ratio');
+
+								filename_to.push((new Date).getTime()+'.json');
+
+							var contact_json = JSON.stringify(contacts, null, 2);
+
+							fs.writeFile(path.join(user_files, filename_to.join('-')), contact_json, function(err, result) {
 								if (err) {
 									log.error(err);
 									res.status(400).send(err);
