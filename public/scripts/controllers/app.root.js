@@ -15,7 +15,6 @@ angular.module('addressBundlerApp')
 
     	$http.get('/auth/session').success(function(result) {
     	    loginSession.resolve(result);
-
     	}).catch(function(err) {
     		loginSession.reject(err);
     	});
@@ -24,8 +23,25 @@ angular.module('addressBundlerApp')
         $rootScope.isLoggedIn = isLoggedIn.promise;
 
     	$rootScope.loginSession.then(function(result) {
-    		DS.find('user', result.userId);
-            DS.bindOne('user', result.userId, $rootScope, 'loggedInUser');
+    		DS.find('user', result.userId).then(function() {
+                DS.bindOne('user', result.userId, $rootScope, 'loggedInUser');
+            });
     	});
+
+
+        $rootScope.pageview = function() {
+            ga('send', 'pageview', {
+                page: location.pathname + location.search  + location.hash
+            });
+        };
+
+        $rootScope.gaevent = function(category, action, label, value) {
+            ga('send', 'event',
+                category ? category : null,
+                action ? action : null,
+                label ? label : null,
+                value ? value : null
+            );
+        };
 
   }]);

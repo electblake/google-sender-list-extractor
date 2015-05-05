@@ -9,5 +9,5 @@
  */
 angular.module('addressBundlerApp')
   .controller('EmailsStartCtrl', ['$scope', function ($scope) {
-    
+    $scope.pageview();
   }]);

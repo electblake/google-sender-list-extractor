@@ -26,6 +26,7 @@ module.exports = function(app) {
 	require('./users/restful')(app);
 	app.use('/api/users', require('./users/bundles'));
 	app.use('/api/users', require('./users/download'));
+	app.use(require('./users/logout'));
 
 	// google api interaction
 	app.use('/api/gapi', require('./gapi/labels'));

@@ -1,10 +1,18 @@
 <div class="row">
   <div class="col s12">
     <ul class="tabs" ng-click="stepTab($event)">
-      <li class="tab col s3"><a class="active" href="#tab-authorize">Connect Google</a></li>
-      <li class="tab col s3"><a href="#tab-select-labels">Select Labels</a></li>
-      <li class="tab col s3"><a href="#tab-capture">Capture..</a></li>
-      <li class="tab col s3"><a href="#tab-bundle">Bundle!</a></li>
+      <li class="tab col s3">
+        <a class="active"  ng-class="{ 'grey-text': stepPos >= 1 }" href="#tab-authorize">Connect Google</a>
+      </li>
+      <li class="tab col s3">
+        <a href="#tab-select-labels" ng-class="{ 'grey-text': stepPos >= 2 }" ng-show="loggedInUser._id">Select Labels</a>
+      </li>
+      <li class="tab col s3">
+        <a href="#tab-capture" ng-class="{ 'grey-text': stepPos >= 3 }" ng-show="loggedInUser._id">Capture..</a>
+      </li>
+      <li class="tab col s3">
+        <a href="#tab-bundle" ng-show="loggedInUser._id">Bundle!</a>
+      </li>
     </ul>
   </div>
   <!-- <h2 class="center">{{ currentTask.name }}</h2> -->
@@ -16,7 +24,7 @@
     </div>
     <p class="center" ng-if="!loggedInUser.auth.google.tokens">
       <a href="/auth/google/authorize" class="btn google waves-effect waves-light">
-          Authorize Google
+          Login with Google
       </a>
     </p>
     <p class="center" ng-if="loggedInUser.auth.google.tokens">
@@ -102,7 +110,10 @@
     <div class="row center">
       <h5 class="header col s12 light">{{ currentTask.message }}</h5>
     </div>
-    <p ng-repeat="bundle in thisBundles" class="center">
+    <p class="flow-text center">
+      These captured bundles are available for download, <strong>but not forever (I think 6 hours)</strong>
+    </p>
+    <p ng-repeat="bundle in thisBundles track by $index" class="center">
       <a href="/api/users/download/{{bundle}}">{{ bundle }}</a>
     </p>
   </div>

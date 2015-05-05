@@ -31,9 +31,10 @@ angular.module('addressBundlerConfig')
 		});
 	}])
 angular.module('addressBundlerConfig')
-	.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
+	.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $locationProvider) {
 
 		$urlRouterProvider.otherwise('/home');
+		// $locationProvider.hashPrefix('!');
 
 		$stateProvider
 			.state('home', {
@@ -79,7 +80,6 @@ angular.module('addressBundlerApp')
 
     	$http.get('/auth/session').success(function(result) {
     	    loginSession.resolve(result);
-
     	}).catch(function(err) {
     		loginSession.reject(err);
     	});
@@ -88,9 +88,26 @@ angular.module('addressBundlerApp')
         $rootScope.isLoggedIn = isLoggedIn.promise;
 
     	$rootScope.loginSession.then(function(result) {
-    		DS.find('user', result.userId);
-            DS.bindOne('user', result.userId, $rootScope, 'loggedInUser');
+    		DS.find('user', result.userId).then(function() {
+                DS.bindOne('user', result.userId, $rootScope, 'loggedInUser');
+            });
     	});
+
+
+        $rootScope.pageview = function() {
+            ga('send', 'pageview', {
+                page: location.pathname + location.search  + location.hash
+            });
+        };
+
+        $rootScope.gaevent = function(category, action, label, value) {
+            ga('send', 'event',
+                category ? category : null,
+                action ? action : null,
+                label ? label : null,
+                value ? value : null
+            );
+        };
 
   }]);
 
@@ -111,20 +128,6 @@ angular.module('addressBundlerApp')
 
 /**
  * @ngdoc function
- * @name addressBundlerApp.controller:EmailsBundleCtrl
- * @description
- * # EmailsBundleCtrl
- * Controller of the addressBundlerApp
- */
-angular.module('addressBundlerApp')
-  .controller('EmailsBundleCtrl', ['$scope', function ($scope) {
-    
-  }]);
-
-'use strict';
-
-/**
- * @ngdoc function
  * @name addressBundlerApp.controller:EmailsSetupCtrl
  * @description
  * # EmailsSetupCtrl
@@ -135,8 +138,8 @@ angular.module('addressBundlerApp')
     var _ = window._;
     $scope.stepPos = 0;
     $scope.currentTask = {
-        name: 'Welcome',
-        message: 'Initializing..',
+        name: 'Connect Google',
+        message: 'Welcome, please login to continue..',
         progress: 0
     };
 
@@ -178,43 +181,74 @@ angular.module('addressBundlerApp')
         }
     }, 500);
 
-    var onceLoggedInUser = $scope.$watch('loggedInUser', function(user) {
-        if (user) {
-            onceLoggedInUser();
-        
-            $scope.$watch('stepPos', function(step, previous) {
-                if (step || step === 0) {
-                    
-                        switch(step) {
-                            case 0:
-                                $scope.activateTab('tab-authorize');
-                                $scope.currentTask.name = 'Login with Google';
-                                $scope.currentTask.message = '';
-                                $scope.authorize();
-                                break;
-                            case 1:
-                                $scope.activateTab('tab-select-labels');
-                                $scope.currentTask.name = 'Select Labels';
-                                $scope.currentTask.message = 'Select message threads from specified labels';
-                                $scope.start();
-                                break;
-                            case 2:
-                                $scope.activateTab('tab-capture');
-                                $scope.currentTask.name = 'Capture Addresses';
-                                $scope.currentTask.message = 'Capture Bundle Below..';
-                                break;
-                            case 3:
-                                $scope.activateTab('tab-bundle');
-                                $scope.currentTask.name = 'Bundle and Save';
-                                $scope.currentTask.message = 'Bundling Email Addresses..';
-                                $scope.userBundles();
-                                break;
-                        }
+
+    $scope.checkSession = function(cb) {
+        if ($scope.loggedInUser && $scope.loggedInUser._id) {
+            if (cb) {
+                console.log(true);
+                cb(null);
+            }
+        } else {
+            console.log(false);
+            $scope.$evalAsync(function() {
+                $scope.stepPos = 0;
+                if (cb) {
+                    cb(new Error('Login to Continue!'));
                 }
             });
         }
+    };
 
+    $scope.$watch('stepPos', function(step, previous) {
+        if (step || step === 0) {
+
+            $scope.gaevent('setup', 'email-capture', 'step', step);
+
+            switch(step) {
+                case 0:
+                    $scope.activateTab('tab-authorize');
+                    $scope.currentTask.name = 'Login with Google';
+                    $scope.currentTask.message = '';
+                    $scope.authorize();
+                    break;
+                case 1:
+                    $scope.activateTab('tab-select-labels');
+                    $scope.currentTask.name = 'Select Labels';
+                    $scope.currentTask.message = 'Select message threads from specified labels';
+                    $scope.checkSession(function(err) {
+                        if (!err) {
+                            $scope.start();
+                        }
+                    });
+                    break;
+                case 2:
+                    $scope.activateTab('tab-capture');
+                    $scope.currentTask.name = 'Capture Addresses';
+                    $scope.currentTask.message = 'Capture Bundle Below..';
+                    $scope.checkSession();
+                    break;
+                case 3:
+                    $scope.activateTab('tab-bundle');
+                    $scope.currentTask.name = 'Bundles';
+                    $scope.currentTask.message = 'Download Address CSV';
+                    $scope.checkSession(function(err) {
+                        $scope.userBundles();
+                    });
+                    break;
+            }
+            $scope.pageview();
+        }
     });
+
+    // var onceLoggedInUser = $scope.$watch('loggedInUser', function(user) {
+    //     if (user) {
+    //         onceLoggedInUser();
+        
+            
+    //     }
+
+    // });
+
 
     $scope.continue = function() {
         $scope.stepPos += 1;
@@ -222,9 +256,7 @@ angular.module('addressBundlerApp')
 
     // step 0
     $scope.authorize = function() {
-        // if ($scope.stepPos === 0) {
-        //     $scope.stepPos = 1;
-        // }
+
     };
 
     // step 1
@@ -240,6 +272,7 @@ angular.module('addressBundlerApp')
     };
 
     $scope.save = function() {
+        $scope.checkSession();
         $scope.loggedInUser.labels = $scope.thisLabels;
         DS.save('user', $scope.loggedInUser._id).then(function() {
             $scope.stepPos = 2;
@@ -296,7 +329,7 @@ angular.module('addressBundlerApp')
  */
 angular.module('addressBundlerApp')
   .controller('EmailsStartCtrl', ['$scope', function ($scope) {
-    
+    $scope.pageview();
   }]);
 
 'use strict';
@@ -310,7 +343,7 @@ angular.module('addressBundlerApp')
  */
 angular.module('addressBundlerApp')
   .controller('HomeCtrl', ['$scope', '$log', function ($scope, $log) {
-   	$log.debug('HomeCtrl');
+   	$scope.pageview();
   }]);
 'use strict';
 
@@ -325,7 +358,7 @@ angular.module('addressBundlerApp')
   .controller('LogoutCtrl', ['$scope', '$http', '$log', '$rootScope', '$q', '$state', function ($scope, $http, $log, $rootScope, $q, $state) {
 
         $http.get('/logout').success(function() {
-            $state.go('home');
+            window.location.href="/";
         });
 
   }]);

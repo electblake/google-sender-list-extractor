@@ -12,8 +12,8 @@ angular.module('addressBundlerApp')
     var _ = window._;
     $scope.stepPos = 0;
     $scope.currentTask = {
-        name: 'Welcome',
-        message: 'Initializing..',
+        name: 'Connect Google',
+        message: 'Welcome, please login to continue..',
         progress: 0
     };
 
@@ -55,43 +55,74 @@ angular.module('addressBundlerApp')
         }
     }, 500);
 
-    var onceLoggedInUser = $scope.$watch('loggedInUser', function(user) {
-        if (user) {
-            onceLoggedInUser();
-        
-            $scope.$watch('stepPos', function(step, previous) {
-                if (step || step === 0) {
-                    
-                        switch(step) {
-                            case 0:
-                                $scope.activateTab('tab-authorize');
-                                $scope.currentTask.name = 'Login with Google';
-                                $scope.currentTask.message = '';
-                                $scope.authorize();
-                                break;
-                            case 1:
-                                $scope.activateTab('tab-select-labels');
-                                $scope.currentTask.name = 'Select Labels';
-                                $scope.currentTask.message = 'Select message threads from specified labels';
-                                $scope.start();
-                                break;
-                            case 2:
-                                $scope.activateTab('tab-capture');
-                                $scope.currentTask.name = 'Capture Addresses';
-                                $scope.currentTask.message = 'Capture Bundle Below..';
-                                break;
-                            case 3:
-                                $scope.activateTab('tab-bundle');
-                                $scope.currentTask.name = 'Bundle and Save';
-                                $scope.currentTask.message = 'Bundling Email Addresses..';
-                                $scope.userBundles();
-                                break;
-                        }
+
+    $scope.checkSession = function(cb) {
+        if ($scope.loggedInUser && $scope.loggedInUser._id) {
+            if (cb) {
+                console.log(true);
+                cb(null);
+            }
+        } else {
+            console.log(false);
+            $scope.$evalAsync(function() {
+                $scope.stepPos = 0;
+                if (cb) {
+                    cb(new Error('Login to Continue!'));
                 }
             });
         }
+    };
 
+    $scope.$watch('stepPos', function(step, previous) {
+        if (step || step === 0) {
+
+            $scope.gaevent('setup', 'email-capture', 'step', step);
+
+            switch(step) {
+                case 0:
+                    $scope.activateTab('tab-authorize');
+                    $scope.currentTask.name = 'Login with Google';
+                    $scope.currentTask.message = '';
+                    $scope.authorize();
+                    break;
+                case 1:
+                    $scope.activateTab('tab-select-labels');
+                    $scope.currentTask.name = 'Select Labels';
+                    $scope.currentTask.message = 'Select message threads from specified labels';
+                    $scope.checkSession(function(err) {
+                        if (!err) {
+                            $scope.start();
+                        }
+                    });
+                    break;
+                case 2:
+                    $scope.activateTab('tab-capture');
+                    $scope.currentTask.name = 'Capture Addresses';
+                    $scope.currentTask.message = 'Capture Bundle Below..';
+                    $scope.checkSession();
+                    break;
+                case 3:
+                    $scope.activateTab('tab-bundle');
+                    $scope.currentTask.name = 'Bundles';
+                    $scope.currentTask.message = 'Download Address CSV';
+                    $scope.checkSession(function(err) {
+                        $scope.userBundles();
+                    });
+                    break;
+            }
+            $scope.pageview();
+        }
     });
+
+    // var onceLoggedInUser = $scope.$watch('loggedInUser', function(user) {
+    //     if (user) {
+    //         onceLoggedInUser();
+        
+            
+    //     }
+
+    // });
+
 
     $scope.continue = function() {
         $scope.stepPos += 1;
@@ -99,9 +130,7 @@ angular.module('addressBundlerApp')
 
     // step 0
     $scope.authorize = function() {
-        // if ($scope.stepPos === 0) {
-        //     $scope.stepPos = 1;
-        // }
+
     };
 
     // step 1
@@ -117,6 +146,7 @@ angular.module('addressBundlerApp')
     };
 
     $scope.save = function() {
+        $scope.checkSession();
         $scope.loggedInUser.labels = $scope.thisLabels;
         DS.save('user', $scope.loggedInUser._id).then(function() {
             $scope.stepPos = 2;

@@ -1,7 +1,8 @@
 angular.module('addressBundlerConfig')
-	.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
+	.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $locationProvider) {
 
 		$urlRouterProvider.otherwise('/home');
+		// $locationProvider.hashPrefix('!');
 
 		$stateProvider
 			.state('home', {

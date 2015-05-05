@@ -11,7 +11,7 @@ angular.module('addressBundlerApp')
   .controller('LogoutCtrl', ['$scope', '$http', '$log', '$rootScope', '$q', '$state', function ($scope, $http, $log, $rootScope, $q, $state) {
 
         $http.get('/logout').success(function() {
-            $state.go('home');
+            window.location.href="/";
         });
 
   }]);

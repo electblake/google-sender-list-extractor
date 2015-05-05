@@ -4,8 +4,9 @@ var _ = require('lodash');
 var path = require('path');
 
 router.get('/download/:filename', function(req, res) {
-	var filepath = path.resolve('user-files', req.user._id.toString(), req.params.filename);
-	res.setHeader('Content-disposition', 'attachment; filename='+req.params.filename);
+
+	var filepath = path.resolve('user-files', req.user._id.toString(), req.params.filename + '.json');
+	res.setHeader('Content-disposition', 'attachment; filename='+req.params.filename + '.csv');
 	res.setHeader('Content-type', 'application/json');
 
 	var json = require(filepath);

@@ -10,7 +10,7 @@ router.get('/bundles', function(req, res) {
 
 			var filenames = [];
 			_.each(files, function(file) {
-				filenames.push(file.replace('user-files/'+req.user._id.toString()+'/', ''));
+				filenames.push(file.replace('user-files/'+req.user._id.toString()+'/', '').replace('.json', ''));
 			});
 			res.send(filenames);
 		}

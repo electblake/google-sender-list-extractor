@@ -11,6 +11,8 @@ var _ = require('lodash');
 var async = require('async');
 var fs = require('fs-extra');
 var path = require('path');
+var moment = require('moment');
+var watcher = require('time-calc');
 
 function getRandomArbitrary(min, max) {
     return Math.random() * (max - min) + min;
@@ -35,12 +37,13 @@ router.get('/capture', auth_session, function(req, res, next) {
 
 		var user_labels = req.user.labels;
 		var capture_labels = _.filter(req.user.labels, { use: true });
-
 		var label_ids = _.map(capture_labels, function(row) { return row.id; });
-
 		var base_params = { userId: 'me', id: req.user.email, auth: authClient, maxResults: 1000 };
+
+
 		var threads = [];
 		var threadLimit = 0;
+		var pageCount = 0;
 
 		var getThreadMeta = function(threadId, cb) {
 			params.id = threadId;
@@ -51,19 +54,22 @@ router.get('/capture', auth_session, function(req, res, next) {
 			});
 		};
 
-		async.eachLimit(label_ids, 2, function(label_id, next_label) {
+		async.eachLimit(label_ids, 50, function(label_id, next_label) {
 
-			var params = base_params;
-				params.labelIds = label_id;
+			var params = { labelIds: label_id };
+			var after = moment().subtract(2, 'years').format('YYYY/MM/D');
+			params.q = 'after:' + after;
 
-			log.debug('Capturing Label', label_id);
+			log.debug('Capturing Label', params);
+			var params = _.extend(base_params, params);
 
 			var getThreadsLoop = function(nextPageToken) {
 				if (nextPageToken && nextPageToken.length > 0) {
-					log.debug('Capturing nextPage', label_id);
+					log.debug('--> Capturing nextPage', label_id);
 					params.pageToken = nextPageToken;
 				}
 
+				pageCount += 1;
 				gmail.users.threads.list(params, function(err, result) {
 					if (err) {
 						next_label(err);
@@ -71,7 +77,9 @@ router.get('/capture', auth_session, function(req, res, next) {
 
 						if (result.threads) {
 							threads = threads.concat(result.threads);
-							log.info('Threads Count:', threads.length);
+							log.debug('Threads Count:', threads.length);
+							log.debug('Page Count:', pageCount);
+							// log.debug('Taken:', watcher(params));
 						}
 
 						if (result.nextPageToken) {
@@ -92,27 +100,36 @@ router.get('/capture', auth_session, function(req, res, next) {
 			} else {
 
 				var contacts = [];
+				var query_estimate = threads.length;
+				var threadQueryCount = 0;
+				log.info('--> Thread Meta, estimated:', threads.length, 'queries from', pageCount, 'pages');
 
 				// populate thread meta
-				async.mapLimit(threads, 5, function(thread, next_thread) {
-					log.debug('Metaing Thread', thread.id);
+				async.mapLimit(threads, 220, function(thread, next_thread) {
+					threadQueryCount += 1;
+					log.debug('------> Meta Thread', thread.id, Math.ceil(threadQueryCount / query_estimate * 100)+'%', thread.snippet);
+
 					params = _.merge(base_params, { id: thread.id })
 					gmail.users.threads.get(params, function(err, thread_info) {
 						if (err) {
 							next_thread(err);
 						} else {
 							_.each(thread_info.messages, function(message, next_message) {
+
 								var headers = message.payload.headers;
-								var subject = _.find(headers, { name: 'Subject' }).value;
+								var subject = _.find(headers, { name: 'Subject' }).value.replace(',', '');
 								var from = _.find(headers, { name: 'From' }).value;
-								var date = _.find(headers, { name: 'Date' }).value;
+								var message_date = moment(new Date(_.find(headers, { name: 'Date' }).value));
+								var date = message_date.format();
 								var dupes = _.where(contacts, { from: from });
 
 								if (!dupes || dupes.length < 1) {
 									contacts.push({ subject: subject, from: from, date: date });
+								} else {
+									log.debug('From', from, 'is duplicate', dupes);
 								}
 							});
-
+							// log.debug('----> Taken:', watcher(params));
 							next_thread(null);
 						}
 					});
@@ -121,24 +138,29 @@ router.get('/capture', auth_session, function(req, res, next) {
 						log.error(err);
 						res.status(400).send(err);
 					} else {
-
+						log.info('--> Finishing..');
 						var report = {
 							count: contacts.length,
 							sample: contacts[0]
 						};
 
-						var user_files = path.resolve(path.join('user-files', req.user._id.toString()));
+						if (contacts.length > 0) {
+							var user_files = path.resolve(path.join('user-files', req.user._id.toString()));
+							log.info('----> Writing', contacts.length, 'contacts to', user_files);
 
-						fs.ensureDirSync(user_files);
+							fs.ensureDirSync(user_files);
 
-						fs.writeFile(path.join(user_files, contacts.length+'-contacts--'+(new Date).getTime()+'.json'), JSON.stringify(contacts, null, 2), function(err, result) {
-							if (err) {
-								log.error(err);
-								res.status(400).send(err);
-							} else {
-								res.send(report);
-							}
-						});
+							fs.writeFile(path.join(user_files, contacts.length+'-contacts--'+(new Date).getTime()+'.json'), JSON.stringify(contacts, null, 2), function(err, result) {
+								if (err) {
+									log.error(err);
+									res.status(400).send(err);
+								} else {
+									res.send(report);
+								}
+							});
+						} else {
+							res.send(report);
+						}
 					}
 				});
 			}

@@ -9,5 +9,5 @@
  */
 angular.module('addressBundlerApp')
   .controller('HomeCtrl', ['$scope', '$log', function ($scope, $log) {
-   	$log.debug('HomeCtrl');
+   	$scope.pageview();
   }]);
