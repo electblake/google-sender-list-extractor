@@ -6,6 +6,10 @@ var UserSchema = new Schema({
 	email: { type: String, required: true },
 	name: { type: String },
 	labels: [LabelSchema],
+	capture: {
+		after_unit: { type: String, default: 'years' },
+		after_num: { type: Number, default: 1 }
+	},
 	auth: {
 		google: {
 			tokens: {

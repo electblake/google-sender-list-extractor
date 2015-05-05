@@ -42,6 +42,23 @@
     <div class="row center">
       <h5 class="header col s12 light">{{ currentTask.message }}</h5>
     </div>
+    <div class="container">
+      <div class="row">
+        <div class="input-field col s6">
+          <label>Capture Last</label><br />
+          <input type="text" ng-model="loggedInUser.capture.after_num" placeholder="<Integer>" />
+        </div>
+        <div class="input-field col s6">
+          <br />
+          <select class="browser-default" ng-model="loggedInUser.capture.after_unit">
+            <option value="" disabled>Choose Your Range</option>
+            <option value="days">Days</option>
+            <option value="months">Months</option>
+            <option value="years">Years</option>
+          </select>
+        </div>
+      </div>
+    </div>
     <p class="center">
       <a href="" ng-click="setupLabels()" class="btn waves-effect waves-light orange">
           <i class="mdi-navigation-refresh"></i> Refresh Labels from Google

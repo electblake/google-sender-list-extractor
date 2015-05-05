@@ -36,6 +36,8 @@ router.get('/capture', auth_session, function(req, res, next) {
 		authClient.setCredentials(req.user.auth.google.tokens);
 
 		var user_labels = req.user.labels;
+		var after_unit = req.user.capture.after_unit;
+		var after_num = req.user.capture.after_num;
 		var capture_labels = _.filter(req.user.labels, { use: true });
 		var label_ids = _.map(capture_labels, function(row) { return row.id; });
 		var base_params = { userId: 'me', id: req.user.email, auth: authClient, maxResults: 1000 };
@@ -57,7 +59,7 @@ router.get('/capture', auth_session, function(req, res, next) {
 		async.eachLimit(label_ids, 50, function(label_id, next_label) {
 
 			var params = { labelIds: label_id };
-			var after = moment().subtract(2, 'years').format('YYYY/MM/D');
+			var after = moment().subtract(parseInt(after_num), after_unit).format('YYYY/MM/D');
 			params.q = 'after:' + after;
 
 			log.debug('Capturing Label', params);
