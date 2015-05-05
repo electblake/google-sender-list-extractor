@@ -105,9 +105,9 @@
             </div>
           </div>
         </div>
-        <div class="row">
+        <div class="row" ng-if="currentTask.report.sample">
           <h6>Sample</h6>
-          <ul class="collection" ng-if="currentTask.report.sample">
+          <ul class="collection">
               <li class="collection-item avatar">
                 <img src="http://www.gravatar.com/avatar/{{ currentTask.report.sample.email | gravatar }}" class="circle"/>
                 <span class="title">{{ currentTask.report.sample.from }}</span>
