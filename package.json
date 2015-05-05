@@ -1,6 +1,6 @@
 {
   "name": "node-gmail-address-bundler",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Bundle up your gmail address in-bound contacts",
   "homepage": "http://github.com/electblake/node-gmail-address-bundler",
   "main": "index.js",
