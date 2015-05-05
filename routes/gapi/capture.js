@@ -124,24 +124,41 @@ router.get('/capture', auth_session, function(req, res, next) {
 						if (err) {
 							next_thread(err);
 						} else {
+
+							var fromParse = /(?:"?([^"]*)"?\s)?(?:<?(.+@[^>]+)>?)/i;
+
+
+
 							_.each(thread_info.messages, function(message, next_message) {
 								try {
 
 									var headers = message.payload.headers;
 
 									var from = _.find(headers, { name: 'From' }).value;
+								
 									var message_date = moment(new Date(_.find(headers, { name: 'Date' }).value));
 									var date = message_date.format();
-									var dupes = _.where(contacts, { from: from });
+									
+
+									var from_match = fromParse.exec(from);
+									var name = from_match[1];
+									var email = from_match[2];
+
+									var dupes = _.where(contacts, { email: email });
 
 									var subject = _.find(headers, { name: 'Subject' }).value.replace(',', '');
 
 								} catch (err) {
-									
+									log.error(err);
 								}
 
 								if ((!dupes || dupes.length < 1) && from) {
-									contacts.push({ subject: subject, from: from, date: date });
+									contacts.push({
+										subject: subject,
+										name: name,
+										email: email,
+										// from: from,
+										date: date });
 								} else {
 									skipCount += 1;
 									// log.warn('From', from, 'is duplicate', dupes);

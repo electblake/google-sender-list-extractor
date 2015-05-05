@@ -15,7 +15,8 @@ router.get('/download/:filename', auth_session, function(req, res) {
 	
 	var csv_row = [];
 	csv_row.push('date');
-	csv_row.push('from');
+	csv_row.push('name');
+	csv_row.push('email');
 	csv_row.push('subject');
 	csv_output.push(csv_row.join(','));
 
@@ -23,7 +24,8 @@ router.get('/download/:filename', auth_session, function(req, res) {
 
 		var csv_row = [];
 		csv_row.push(row.date);
-		csv_row.push(row.from);
+		csv_row.push(row.name);
+		csv_row.push(row.email);
 		csv_row.push(row.subject);
 
 		csv_output.push(csv_row.join(','));
