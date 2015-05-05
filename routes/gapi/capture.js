@@ -157,7 +157,7 @@ router.get('/capture', auth_session, function(req, res, next) {
 						res.status(400).send(err);
 					} else {
 
-						var duplicate_ratio = (skipCount / contacts.length).toPrecision(2);
+						var duplicate_ratio = (contacts.length / skipCount).toPrecision(2);
 
 						var report = {
 							count: contacts.length,

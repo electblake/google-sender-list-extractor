@@ -160,7 +160,7 @@ angular.module('addressBundlerApp')
         $scope.currentTask.message = 'Capturing Google Threads.. (This Will Take Awhile)';
         $http.get('/api/gapi/capture').success(function(result) {
             $scope.currentTask.progress = 100;
-            $scope.currentTask.message = result.count + " Addresses Captured. Duplicate Ratio " + result.duplicate_ratio;
+            $scope.currentTask.message = result.count + " Addresses. Capture to Duplicate Ratio 1:" + result.duplicate_ratio;
             $scope.currentTask.report = result;
         }).catch(function(err) {
 
