@@ -114,7 +114,7 @@ router.get('/capture', auth_session, function(req, res, next) {
 				log.info('--> Thread Meta, estimated:', threads.length, 'queries from', pageCount, 'pages');
 
 				// populate thread meta
-				async.mapLimit(threads, 220, function(thread, next_thread) {
+				async.mapLimit(threads, 200, function(thread, next_thread) {
 					threadQueryCount += 1;
 					var thread_progress = Math.ceil(threadQueryCount / query_estimate * 100)+'%';
 					log.debug('----> Meta Threads', thread_progress, 'on', thread.id, thread.snippet);
