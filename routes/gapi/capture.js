@@ -171,55 +171,53 @@ router.get('/capture', auth_session, function(req, res, next) {
 				}, function(err) {
 					if (err) {
 						log.error(err);
-						res.status(400).send(err);
+					}
+
+					var duplicate_ratio = (contacts.length / skipCount).toPrecision(2);
+
+					var report = {
+						count: contacts.length,
+						sample: contacts[0],
+						duplicate_ratio: duplicate_ratio
+					};
+
+					log.info('--> Finishing..');
+					log.info('----> Duplicate Ratio', duplicate_ratio);
+
+					if (contacts.length > 0) {
+						var user_files = path.resolve(path.join('user-files', req.user._id.toString()));
+						fs.ensureDirSync(user_files);
+
+						log.info('----> Writing', contacts.length, 'contacts to', user_files);
+
+						var filename_to = [];
+						
+							filename_to.push(req.user.email.replace('@','_').replace('.', '_'));
+
+							filename_to.push(contacts.length);
+							filename_to.push('contacts');
+
+							filename_to.push(req.user.capture.after_num);
+							filename_to.push(req.user.capture.after_unit);
+							filename_to.push('-');
+						
+							filename_to.push(duplicate_ratio);
+							filename_to.push('ratio');
+
+							filename_to.push((new Date).getTime()+'.json');
+
+						var contact_json = JSON.stringify(contacts, null, 2);
+
+						fs.writeFile(path.join(user_files, filename_to.join('-')), contact_json, function(err, result) {
+							if (err) {
+								log.error(err);
+								res.status(400).send(err);
+							} else {
+								res.send(report);
+							}
+						});
 					} else {
-
-						var duplicate_ratio = (contacts.length / skipCount).toPrecision(2);
-
-						var report = {
-							count: contacts.length,
-							sample: contacts[0],
-							duplicate_ratio: duplicate_ratio
-						};
-
-						log.info('--> Finishing..');
-						log.info('----> Duplicate Ratio', duplicate_ratio);
-
-						if (contacts.length > 0) {
-							var user_files = path.resolve(path.join('user-files', req.user._id.toString()));
-							fs.ensureDirSync(user_files);
-
-							log.info('----> Writing', contacts.length, 'contacts to', user_files);
-
-							var filename_to = [];
-							
-								filename_to.push(req.user.email.replace('@','_').replace('.', '_'));
-
-								filename_to.push(contacts.length);
-								filename_to.push('contacts');
-
-								filename_to.push(req.user.capture.after_num);
-								filename_to.push(req.user.capture.after_unit);
-								filename_to.push('-');
-							
-								filename_to.push(duplicate_ratio);
-								filename_to.push('ratio');
-
-								filename_to.push((new Date).getTime()+'.json');
-
-							var contact_json = JSON.stringify(contacts, null, 2);
-
-							fs.writeFile(path.join(user_files, filename_to.join('-')), contact_json, function(err, result) {
-								if (err) {
-									log.error(err);
-									res.status(400).send(err);
-								} else {
-									res.send(report);
-								}
-							});
-						} else {
-							res.send(report);
-						}
+						res.send(report);
 					}
 				});
 			}
