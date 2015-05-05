@@ -176,8 +176,14 @@ router.get('/capture', auth_session, function(req, res, next) {
 
 							var filename_to = [];
 							
+								filename_to.push(req.user.email.replace('@','_').replace('.', '_'));
+
 								filename_to.push(contacts.length);
 								filename_to.push('contacts');
+
+								filename_to.push(req.user.capture.after_num);
+								filename_to.push(req.user.capture.after_unit);
+								filename_to.push('-');
 							
 								filename_to.push(duplicate_ratio);
 								filename_to.push('ratio');
