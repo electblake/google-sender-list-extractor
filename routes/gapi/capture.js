@@ -119,15 +119,22 @@ router.get('/capture', auth_session, function(req, res, next) {
 							next_thread(err);
 						} else {
 							_.each(thread_info.messages, function(message, next_message) {
+								try {
 
-								var headers = message.payload.headers;
-								var subject = _.find(headers, { name: 'Subject' }).value.replace(',', '');
-								var from = _.find(headers, { name: 'From' }).value;
-								var message_date = moment(new Date(_.find(headers, { name: 'Date' }).value));
-								var date = message_date.format();
-								var dupes = _.where(contacts, { from: from });
+									var headers = message.payload.headers;
 
-								if (!dupes || dupes.length < 1) {
+									var from = _.find(headers, { name: 'From' }).value;
+									var message_date = moment(new Date(_.find(headers, { name: 'Date' }).value));
+									var date = message_date.format();
+									var dupes = _.where(contacts, { from: from });
+
+									var subject = _.find(headers, { name: 'Subject' }).value.replace(',', '');
+
+								} catch (err) {
+									
+								}
+
+								if ((!dupes || dupes.length < 1) && from) {
 									contacts.push({ subject: subject, from: from, date: date });
 								} else {
 									skipCount += 1;
