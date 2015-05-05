@@ -1,3 +1,20 @@
+### 0.1.2 (2015-05-05)
+
+
+#### Bug Fixes
+
+* **capture:** try-catch header parsing of messages ([8c53a02c](http://github.com/electblake/node-gmail-address-bundler/commit/8c53a02cbd4fb11664ee38f37bc5f06e03c2054a))
+* **sample:** after capture hide title ([a6392304](http://github.com/electblake/node-gmail-address-bundler/commit/a6392304544001186487dd267fe78eeaa7008f28))
+
+
+#### Features
+
+* **capture:**
+  * prettier output ([1f3d0586](http://github.com/electblake/node-gmail-address-bundler/commit/1f3d05868e52ea6b0cc8034e677f7d5b75ff9af6))
+  * better reporting and sample/ratio display ([98023554](http://github.com/electblake/node-gmail-address-bundler/commit/980235543932e8742ecb357798e26e2654fbc546))
+  * added configurable "latest X days" with unit support ([82d7cfba](http://github.com/electblake/node-gmail-address-bundler/commit/82d7cfba9309fe9e992094801c65bd28bd379881))
+
+
 ### 0.1.1 (2015-05-05)
 
 
