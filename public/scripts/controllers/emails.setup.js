@@ -163,8 +163,14 @@ angular.module('addressBundlerApp')
             $scope.currentTask.message = result.count + " Addresses Captured. Duplicate Ratio " + result.duplicate_ratio;
             $scope.currentTask.report = result;
         }).catch(function(err) {
-            $scope.currentTask.progress = 0;
-            $scope.currentTask.message = err.message ? err.message : JSON.stringify(err, null, 2);
+
+            if (err.status == 503) {
+                $scope.currentTask.progress = 50;
+                $scope.currentTask.message = 'Capture job is continuing in background, you can navigate away. Just check bundles later..';
+            } else {
+                $scope.currentTask.progress = 0;
+                $scope.currentTask.message = err.message ? err.message : JSON.stringify(err, null, 2);
+            }
         });
     };
 

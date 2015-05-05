@@ -78,7 +78,13 @@ router.get('/capture', auth_session, function(req, res, next) {
 					} else {
 
 						if (result.threads) {
-							threads = threads.concat(result.threads);
+							_.each(result.threads, function(thread) {
+								var dupes = _.where(threads, { id: thread.id });
+								if (!dupes || dupes.length < 1) {
+									threads.push(thread);
+								}
+							});
+							
 							log.debug('Threads Count:', threads.length);
 							log.debug('Page Count:', pageCount);
 							// log.debug('Taken:', watcher(params));
@@ -151,7 +157,7 @@ router.get('/capture', auth_session, function(req, res, next) {
 						res.status(400).send(err);
 					} else {
 
-						var duplicate_ratio = (contacts.length / skipCount).toPrecision(2);
+						var duplicate_ratio = (skipCount / contacts.length).toPrecision(2);
 
 						var report = {
 							count: contacts.length,

@@ -15,6 +15,56 @@ angular.module('addressBundlerDirectives', []);
 angular.module('addressBundlerFilters', []);
 angular.module('addressBundlerServices', []);
 angular.module('addressBundlerRun', []);
+angular.module('addressBundlerConfig')
+  .config(['DSProvider', function (DSProvider) {
+    DSProvider.defaults.basePath = '/api'; // etc.
+  }]);
+angular.module('addressBundlerConfig')
+	.run(['DS', function(DS) {
+		DS.defineResource({
+			name: 'user',
+			endpoint: 'users',
+			idAttribute: '_id',
+			beforeUpdate: function(resource, attrs, cb) {
+				attrs.updated = (new Date);
+				cb(null, attrs);
+			}
+		});
+	}])
+angular.module('addressBundlerConfig')
+	.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $locationProvider) {
+
+		$urlRouterProvider.otherwise('/home');
+		// $locationProvider.hashPrefix('!');
+
+		$stateProvider
+			.state('home', {
+				'url': '/home',
+				'templateUrl': 'views/home.html',
+				'controller': 'HomeCtrl'
+			})
+			.state('logout', {
+				'controller': 'LogoutCtrl',
+				'url': '/logout',
+				'template': '<div ui-view></div>'
+			})
+			.state('emails', {
+				'abstract': true,
+				'controller': 'EmailsAbstractCtrl',
+				'url': '/emails',
+				'template': '<div ui-view></div>'
+			})
+			.state('emails.start', {
+				url: '/start?step-pos',
+				controller: 'EmailsStartCtrl',
+				templateUrl: 'views/emails/start.html'
+			})
+			.state('emails.setup', {
+				url: '/setup?step-pos',
+				controller: 'EmailsSetupCtrl',
+				templateUrl: 'views/emails/setup.html'
+			});
+	}]);
 'use strict';
 
 /**
@@ -248,8 +298,14 @@ angular.module('addressBundlerApp')
             $scope.currentTask.message = result.count + " Addresses Captured. Duplicate Ratio " + result.duplicate_ratio;
             $scope.currentTask.report = result;
         }).catch(function(err) {
-            $scope.currentTask.progress = 0;
-            $scope.currentTask.message = err.message ? err.message : JSON.stringify(err, null, 2);
+
+            if (err.status == 503) {
+                $scope.currentTask.progress = 50;
+                $scope.currentTask.message = 'Capture job is continuing in background, you can navigate away. Just check bundles later..';
+            } else {
+                $scope.currentTask.progress = 0;
+                $scope.currentTask.message = err.message ? err.message : JSON.stringify(err, null, 2);
+            }
         });
     };
 
@@ -314,54 +370,3 @@ angular.module('addressBundlerApp')
         });
 
   }]);
-
-angular.module('addressBundlerConfig')
-  .config(['DSProvider', function (DSProvider) {
-    DSProvider.defaults.basePath = '/api'; // etc.
-  }]);
-angular.module('addressBundlerConfig')
-	.run(['DS', function(DS) {
-		DS.defineResource({
-			name: 'user',
-			endpoint: 'users',
-			idAttribute: '_id',
-			beforeUpdate: function(resource, attrs, cb) {
-				attrs.updated = (new Date);
-				cb(null, attrs);
-			}
-		});
-	}])
-angular.module('addressBundlerConfig')
-	.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $locationProvider) {
-
-		$urlRouterProvider.otherwise('/home');
-		// $locationProvider.hashPrefix('!');
-
-		$stateProvider
-			.state('home', {
-				'url': '/home',
-				'templateUrl': 'views/home.html',
-				'controller': 'HomeCtrl'
-			})
-			.state('logout', {
-				'controller': 'LogoutCtrl',
-				'url': '/logout',
-				'template': '<div ui-view></div>'
-			})
-			.state('emails', {
-				'abstract': true,
-				'controller': 'EmailsAbstractCtrl',
-				'url': '/emails',
-				'template': '<div ui-view></div>'
-			})
-			.state('emails.start', {
-				url: '/start?step-pos',
-				controller: 'EmailsStartCtrl',
-				templateUrl: 'views/emails/start.html'
-			})
-			.state('emails.setup', {
-				url: '/setup?step-pos',
-				controller: 'EmailsSetupCtrl',
-				templateUrl: 'views/emails/setup.html'
-			});
-	}]);
