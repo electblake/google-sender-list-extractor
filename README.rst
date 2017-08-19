@@ -26,7 +26,7 @@ Requirements
 Install
 -------
 
-Only has been tested on node 5.3.0::
+Only has been tested on node 5.3.0 `nvm <https://github.com/creationix/nvm/>`_:
     
     nvm install && nvm use
 
