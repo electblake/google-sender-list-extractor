@@ -26,7 +26,7 @@ Install
 -------
 
 Only has been tested on node 5.3.0, so if you have .. External hyperlinks, like `nvm 
-<https://github.com/creationix/nvm/>`_.::
+<https://github.com/creationix/nvm/>`_.:
     
     nvm install && nvm use
 
@@ -35,7 +35,7 @@ Install dependencies::
     npm install
     bower install
 
-Create and modify a file named .env::
+Create and modify a file named `.env`::
 
     PORT=9000
 
