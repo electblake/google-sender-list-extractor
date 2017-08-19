@@ -16,6 +16,10 @@ Requirements
 Install
 -------
 
+Install dependencies::
+
+    npm install
+
 Create and modify a file named .env::
 
     PORT=9000
@@ -30,3 +34,11 @@ Create and modify a file named .env::
     GOOGLE_CLIENT_ID=
     GOOGLE_CLIENT_SECRET=
     GOOGLE_REDIRECT_URL=http://localhost:9000/auth/google/callback
+
+Run devserver
+
+    npm start
+
+or
+
+    gulp
