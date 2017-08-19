@@ -6,7 +6,6 @@ var express = require('express'),
     cookieParser = require('cookie-parser'),
     bodyParser = require('body-parser'),
     mongoose = require('mongoose'),
-    exphbs  = require('express-handlebars'),
     cfg = require('./lib/config');
 
 var app = express();
