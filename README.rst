@@ -41,7 +41,7 @@ Create and modify a file named `.env`::
 
     MONGO_URI=mongodb://localhost:27017/dbname
 
-    REDIS_HOST=redishost.com:17510
+    REDIS_HOST=localhost:17510
     REDIS_PASS=pass
 
     DEBUG=*,-express:router:layer,-express:*,-send,-body-parser:*
