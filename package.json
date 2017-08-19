@@ -1,8 +1,8 @@
 {
-  "name": "node-gmail-sender-lists",
+  "name": "google-sender-list-extractor",
   "version": "0.1.7",
   "description": "Bundle up your gmail address in-bound contacts",
-  "homepage": "http://github.com/electblake/node-gmail-sender-lists",
+  "homepage": "http://github.com/electblake/google-sender-list-extractor",
   "main": "index.js",
   "scripts": {
     "start": "gulp",

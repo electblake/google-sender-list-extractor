@@ -7,6 +7,12 @@ Features
 * Choose Labels
 * Captures Last 2 Years
 
+Requirements
+------------
+
+* node version 5.3.0 (I think)
+* bower
+
 Install
 -------
 
