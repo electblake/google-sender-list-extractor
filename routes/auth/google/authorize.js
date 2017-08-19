@@ -1,7 +1,6 @@
 var router = require('express').Router();
 var google = require('../../../lib/google');
 var User = require('../../../models/User');
-var expect = require('chai').expect;
 
 router.get('/authorize', function(req, res, next) {
 	res.redirect(google.getAuthUrl());
