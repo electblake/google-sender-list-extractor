@@ -19,14 +19,14 @@ Techstack
 Requirements
 ------------
 
-* node 5.3.0
+* node 5.3.0 (`nvm <https://github.com/creationix/nvm/>` reccomended)
 * bower
+* nvm (optional)
 
 Install
 -------
 
-Only has been tested on node 5.3.0, so if you have .. External hyperlinks, like `nvm 
-<https://github.com/creationix/nvm/>`_.:
+Only has been tested on node 5.3.0, so if you have .. External hyperlinks, like `nvm <https://github.com/creationix/nvm/>`_.:
     
     nvm install && nvm use
 
